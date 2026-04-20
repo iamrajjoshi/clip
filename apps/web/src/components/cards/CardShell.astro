@@ -6,11 +6,7 @@ const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
 const permalink = getClipPermalink(entry);
 ---
 
-<article
-  class="card-surface"
-  data-filter-item
-  data-kind={entry.data.kind}
->
+<article class="card-surface">
   <div class="flex items-center justify-between gap-4 text-[12px] text-[var(--text-muted)]">
     <span>{entry.data.kind}</span>
     <a href={permalink}>

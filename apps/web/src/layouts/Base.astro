@@ -15,6 +15,7 @@ const {
 
 const canonical = new URL(pathname, Astro.site);
 const socialImage = image ? new URL(image, Astro.site).toString() : undefined;
+const rssFeed = new URL("/rss.xml", Astro.site).toString();
 const commitSha = import.meta.env.PUBLIC_COMMIT_SHA ?? "dev";
 const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
 ---
@@ -27,7 +28,9 @@ const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
     <title>{title} | clip</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#000000" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical.toString()} />
+    <link rel="alternate" type="application/rss+xml" title="clip rss" href={rssFeed} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={`${title} | clip`} />
     <meta property="og:description" content={description} />
@@ -43,11 +46,9 @@ const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
       <p class="text-sm font-semibold">clip.rajjoshi.me</p>
       <p class="mt-2 text-sm text-[var(--text-muted)]">{description}</p>
     </header>
-    <hr />
     <main>
       <slot />
     </main>
-    <hr />
     <footer class="site-footer page-shell">
       <div class="nav-row justify-center text-sm text-[var(--text-muted)]">
         <a href={commitHref} target="_blank" rel="noreferrer">

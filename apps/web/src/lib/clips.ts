@@ -28,10 +28,6 @@ export function collectTagCounts(clips: ClipEntry[]) {
     });
 }
 
-export function clipKinds(clips: ClipEntry[]) {
-  return [...new Set(clips.map((clip) => clip.data.kind))];
-}
-
 export function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
