@@ -132,7 +132,6 @@ pre code {
   padding-inline: 16px;
 }
 
-.site-rule,
 .section-block,
 .card-surface {
   border-top: 1px solid var(--border);
@@ -143,9 +142,14 @@ pre code {
   padding-block: 24px;
 }
 
-.site-header,
+.site-header {
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
 .site-footer {
-  padding-block: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .section-kicker {
@@ -177,16 +181,6 @@ pre code {
   padding: 16px;
 }
 
-.mono-button {
-  min-height: 32px;
-  padding: 0 16px;
-}
-
-.mono-button[data-active="true"] {
-  background: var(--inverse-bg);
-  color: var(--inverse-text);
-}
-
 .tag-chip {
   display: inline-flex;
   align-items: center;
@@ -199,16 +193,6 @@ pre code {
 }
 
 .tag-chip:hover {
-  background: var(--inverse-bg);
-  color: var(--inverse-text);
-}
-
-.kind-toggle {
-  min-height: 32px;
-  padding: 0 16px;
-}
-
-.kind-toggle[data-active="true"] {
   background: var(--inverse-bg);
   color: var(--inverse-text);
 }

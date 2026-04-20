@@ -10,11 +10,9 @@ const { clips, emptyMessage = "nothing here yet." } = Astro.props as {
   clips: ClipEntry[];
   emptyMessage?: string;
 };
-
-const availableKinds = [...new Set(clips.map((clip) => clip.data.kind))];
 ---
 
-<section class="page-shell pb-10 pt-0">
+<section class="page-shell pb-4 pt-0">
   {clips.length ? (
     <div class="pt-0">
       {clips.map((clip) => {
@@ -41,31 +39,3 @@ const availableKinds = [...new Set(clips.map((clip) => clip.data.kind))];
     <div class="section-block py-6 text-[var(--text-muted)]">{emptyMessage}</div>
   )}
 </section>
-
-{clips.length > 0 && (
-  <script
-    is:inline
-    define:vars={{
-      availableKinds,
-      totalClips: clips.length,
-    }}
-  >
-    const items = Array.from(document.querySelectorAll("[data-filter-item]"));
-
-    function applyFilters(detail) {
-      const activeKinds = detail?.kinds?.length ? detail.kinds : availableKinds;
-
-      for (const item of items) {
-        const kind = item.dataset.kind ?? "";
-        const matchesKind = activeKinds.includes(kind);
-        item.toggleAttribute("hidden", !matchesKind);
-      }
-    }
-
-    applyFilters({ kinds: availableKinds });
-
-    window.addEventListener("clip-filters:change", (event) => {
-      applyFilters(event.detail);
-    });
-  </script>
-)}
