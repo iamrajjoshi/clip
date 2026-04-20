@@ -1,17 +1,29 @@
+import path from "node:path";
 import { readdir } from "node:fs/promises";
 import { getCollection, type CollectionEntry } from "astro:content";
 
-const clipsDir = new URL("../content/clips", import.meta.url);
+const candidateClipDirs = [
+  path.resolve(process.cwd(), "src/content/clips"),
+  path.resolve(process.cwd(), "apps/web/src/content/clips"),
+];
 
 async function hasClipFiles() {
-  try {
-    const entries = await readdir(clipsDir, { withFileTypes: true });
-    return entries.some((entry) => {
-      return entry.isFile() && entry.name.endsWith(".md") && !entry.name.startsWith("_");
-    });
-  } catch {
-    return false;
+  for (const clipsDir of candidateClipDirs) {
+    try {
+      const entries = await readdir(clipsDir, { withFileTypes: true });
+      if (
+        entries.some((entry) => {
+          return entry.isFile() && entry.name.endsWith(".md") && !entry.name.startsWith("_");
+        })
+      ) {
+        return true;
+      }
+    } catch {
+      continue;
+    }
   }
+
+  return false;
 }
 
 export async function getClipEntries(): Promise<CollectionEntry<"clips">[]> {

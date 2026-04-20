@@ -34,7 +34,7 @@ if (entry.data.kind !== "video") {
       </div>
     )}
   </div>
-  {entry.body.trim() && (
+  {entry.body?.trim() && (
     <div slot="commentary" class="mt-4 border-t border-[var(--border)] pt-4">
       <EntryBody entry={entry} />
     </div>

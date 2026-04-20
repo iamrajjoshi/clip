@@ -2,7 +2,7 @@
 import { render, type CollectionEntry } from "astro:content";
 
 const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
-const hasBody = entry.body.trim().length > 0;
+const hasBody = (entry.body?.trim().length ?? 0) > 0;
 let Content: Awaited<ReturnType<typeof render>>["Content"] | null = null;
 
 if (hasBody) {
