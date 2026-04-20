@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": [
+    "src/**/*",
+    "../../apps/web/src/content/schema.ts"
+  ],
+  "exclude": [
+    "dist"
+  ]
+}

@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CardShell from "@/components/cards/CardShell.astro";
+import EntryBody from "@/components/EntryBody.astro";
+
+const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
+
+if (entry.data.kind !== "video") {
+  throw new Error("VideoCard received a non-video entry.");
+}
+---
+
+<CardShell entry={entry}>
+  <div class="grid gap-4 sm:grid-cols-[1fr_160px] sm:items-start">
+    <div>
+      <p class="section-kicker">{entry.data.provider}</p>
+      <h2 class="mt-3 text-[28px] leading-[1.2] font-semibold">
+        <a href={entry.data.url} target="_blank" rel="noreferrer">
+          {entry.data.title}
+        </a>
+      </h2>
+      <p class="mt-3 text-sm text-[var(--text-muted)]">
+        {entry.data.channel ? `${entry.data.channel} on ${entry.data.provider}` : `saved from ${entry.data.provider}`}
+      </p>
+      <div class="mt-4">
+        <a href={entry.data.url} target="_blank" rel="noreferrer" class="tag-chip">
+          [watch]
+        </a>
+      </div>
+    </div>
+    {entry.data.thumbnail && (
+      <div class="overflow-hidden border border-[var(--border)]">
+        <img src={entry.data.thumbnail} alt="" class="h-full w-full object-cover" loading="lazy" />
+      </div>
+    )}
+  </div>
+  {entry.body.trim() && (
+    <div slot="commentary" class="mt-4 border-t border-[var(--border)] pt-4">
+      <EntryBody entry={entry} />
+    </div>
+  )}
+</CardShell>

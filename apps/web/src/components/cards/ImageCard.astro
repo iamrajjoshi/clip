@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CardShell from "@/components/cards/CardShell.astro";
+import EntryBody from "@/components/EntryBody.astro";
+
+const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
+
+if (entry.data.kind !== "image") {
+  throw new Error("ImageCard received a non-image entry.");
+}
+---
+
+<CardShell entry={entry}>
+  <div class="overflow-hidden border border-[var(--border)]">
+    <img
+      src={entry.data.src}
+      alt={entry.data.alt ?? ""}
+      width={entry.data.width}
+      height={entry.data.height}
+      class="h-auto w-full object-cover"
+      loading="lazy"
+    />
+  </div>
+  <div class="mt-4 flex flex-wrap items-center gap-3 text-base">
+    {entry.data.sourceUrl ? (
+      <a href={entry.data.sourceUrl} target="_blank" rel="noreferrer">
+        {entry.data.alt ?? "open source"}
+      </a>
+    ) : (
+      <p>{entry.data.alt ?? "saved image"}</p>
+    )}
+    <span class="text-sm text-[var(--text-muted)]">{entry.data.width} × {entry.data.height}</span>
+  </div>
+  {entry.body.trim() && (
+    <div slot="commentary" class="mt-4 border-t border-[var(--border)] pt-4">
+      <EntryBody entry={entry} />
+    </div>
+  )}
+</CardShell>

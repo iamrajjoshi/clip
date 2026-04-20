@@ -1,0 +1,67 @@
+---
+import "@/styles/global.css";
+
+const {
+  title = "clip",
+  description = "things i found, kept here.",
+  image,
+  pathname = "/",
+} = Astro.props as {
+  title?: string;
+  description?: string;
+  image?: string;
+  pathname?: string;
+};
+
+const canonical = new URL(pathname, Astro.site);
+const socialImage = image ? new URL(image, Astro.site).toString() : undefined;
+const commitSha = import.meta.env.PUBLIC_COMMIT_SHA ?? "dev";
+const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | clip</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href={canonical.toString()} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={`${title} | clip`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.toString()} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={`${title} | clip`} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+  </head>
+  <body>
+    <header class="site-header page-shell">
+      <p class="text-sm font-semibold">clip.rajjoshi.me</p>
+      <p class="mt-2 text-sm text-[var(--text-muted)]">{description}</p>
+    </header>
+    <hr />
+    <main>
+      <slot />
+    </main>
+    <hr />
+    <footer class="site-footer page-shell">
+      <div class="nav-row justify-center text-sm text-[var(--text-muted)]">
+        <a href={commitHref} target="_blank" rel="noreferrer">
+          {commitSha}
+        </a>
+        <span class="nav-divider">|</span>
+        <a href="https://github.com/iamrajjoshi" target="_blank" rel="noreferrer">
+          iamrajjoshi
+        </a>
+        <span class="nav-divider">|</span>
+        <a href="/rss.xml">
+          rss
+        </a>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+---
+import type { ClipEntry } from "@/lib/clips";
+import LinkCard from "@/components/cards/LinkCard.astro";
+import TweetCard from "@/components/cards/TweetCard.astro";
+import ImageCard from "@/components/cards/ImageCard.astro";
+import VideoCard from "@/components/cards/VideoCard.astro";
+import NoteCard from "@/components/cards/NoteCard.astro";
+
+const { clips, emptyMessage = "nothing here yet." } = Astro.props as {
+  clips: ClipEntry[];
+  emptyMessage?: string;
+};
+
+const availableKinds = [...new Set(clips.map((clip) => clip.data.kind))];
+---
+
+<section class="page-shell pb-10 pt-0">
+  {clips.length ? (
+    <div class="pt-0">
+      {clips.map((clip) => {
+        if (clip.data.kind === "link") {
+          return <LinkCard entry={clip} />;
+        }
+
+        if (clip.data.kind === "tweet") {
+          return <TweetCard entry={clip} />;
+        }
+
+        if (clip.data.kind === "image") {
+          return <ImageCard entry={clip} />;
+        }
+
+        if (clip.data.kind === "video") {
+          return <VideoCard entry={clip} />;
+        }
+
+        return <NoteCard entry={clip} />;
+      })}
+    </div>
+  ) : (
+    <div class="section-block py-6 text-[var(--text-muted)]">{emptyMessage}</div>
+  )}
+</section>
+
+{clips.length > 0 && (
+  <script
+    is:inline
+    define:vars={{
+      availableKinds,
+      totalClips: clips.length,
+    }}
+  >
+    const items = Array.from(document.querySelectorAll("[data-filter-item]"));
+
+    function applyFilters(detail) {
+      const activeKinds = detail?.kinds?.length ? detail.kinds : availableKinds;
+      const activeTags = detail?.tags ?? [];
+
+      for (const item of items) {
+        const kind = item.dataset.kind ?? "";
+        const tags = (item.dataset.tags ?? "").split("|").filter(Boolean);
+        const matchesKind = activeKinds.includes(kind);
+        const matchesTags = activeTags.length === 0 || activeTags.every((tag) => tags.includes(tag));
+        const visible = matchesKind && matchesTags;
+
+        item.toggleAttribute("hidden", !visible);
+      }
+    }
+
+    applyFilters({ kinds: availableKinds, tags: [] });
+
+    window.addEventListener("clip-filters:change", (event) => {
+      applyFilters(event.detail);
+    });
+  </script>
+)}

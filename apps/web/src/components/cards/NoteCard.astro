@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CardShell from "@/components/cards/CardShell.astro";
+import EntryBody from "@/components/EntryBody.astro";
+
+const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
+
+if (entry.data.kind !== "note") {
+  throw new Error("NoteCard received a non-note entry.");
+}
+---
+
+<CardShell entry={entry}>
+  <EntryBody entry={entry} />
+</CardShell>
