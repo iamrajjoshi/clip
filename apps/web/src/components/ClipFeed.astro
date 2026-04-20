@@ -54,20 +54,15 @@ const availableKinds = [...new Set(clips.map((clip) => clip.data.kind))];
 
     function applyFilters(detail) {
       const activeKinds = detail?.kinds?.length ? detail.kinds : availableKinds;
-      const activeTags = detail?.tags ?? [];
 
       for (const item of items) {
         const kind = item.dataset.kind ?? "";
-        const tags = (item.dataset.tags ?? "").split("|").filter(Boolean);
         const matchesKind = activeKinds.includes(kind);
-        const matchesTags = activeTags.length === 0 || activeTags.every((tag) => tags.includes(tag));
-        const visible = matchesKind && matchesTags;
-
-        item.toggleAttribute("hidden", !visible);
+        item.toggleAttribute("hidden", !matchesKind);
       }
     }
 
-    applyFilters({ kinds: availableKinds, tags: [] });
+    applyFilters({ kinds: availableKinds });
 
     window.addEventListener("clip-filters:change", (event) => {
       applyFilters(event.detail);

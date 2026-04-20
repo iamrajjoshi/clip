@@ -203,14 +203,12 @@ pre code {
   color: var(--inverse-text);
 }
 
-.kind-toggle,
-.tag-toggle {
+.kind-toggle {
   min-height: 32px;
   padding: 0 16px;
 }
 
-.kind-toggle[data-active="true"],
-.tag-toggle[data-active="true"] {
+.kind-toggle[data-active="true"] {
   background: var(--inverse-bg);
   color: var(--inverse-text);
 }

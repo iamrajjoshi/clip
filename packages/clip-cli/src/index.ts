@@ -165,7 +165,7 @@ async function main() {
       kind: "link",
       slug,
       clippedAt,
-      tags: prompts.tags,
+      tags: [],
       url: detection.url.toString(),
       title: scraped.title,
       description: scraped.description,
@@ -215,7 +215,7 @@ async function main() {
       kind: "tweet",
       slug,
       clippedAt,
-      tags: prompts.tags,
+      tags: [],
       platform: "x",
       url: detection.url.toString(),
       author: {
@@ -249,7 +249,7 @@ async function main() {
       kind: "video",
       slug,
       clippedAt,
-      tags: prompts.tags,
+      tags: [],
       url: detection.url.toString(),
       provider: scraped.provider,
       title: scraped.title,
@@ -275,7 +275,7 @@ async function main() {
       kind: "image",
       slug,
       clippedAt,
-      tags: prompts.tags,
+      tags: [],
       src,
       width: inspected.width,
       height: inspected.height,
@@ -291,7 +291,7 @@ async function main() {
       kind: "note",
       slug,
       clippedAt,
-      tags: prompts.tags,
+      tags: [],
     });
     body = prompts.body;
   } else {

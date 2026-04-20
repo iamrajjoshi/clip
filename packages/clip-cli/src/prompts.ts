@@ -2,8 +2,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { confirm, input } from "@inquirer/prompts";
-import { normalizeTags } from "./utils";
+import { confirm } from "@inquirer/prompts";
 
 async function openEditor(initialText: string) {
   const editor = process.env.VISUAL || process.env.EDITOR;
@@ -35,15 +34,9 @@ async function openEditor(initialText: string) {
 export async function collectPrompts(existingBody = "") {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     return {
-      tags: [],
       body: existingBody.trim(),
     };
   }
-
-  const rawTags = await input({
-    message: "tags (comma-separated)",
-    default: "",
-  });
 
   let body = existingBody.trim();
 
@@ -67,7 +60,6 @@ export async function collectPrompts(existingBody = "") {
   }
 
   return {
-    tags: normalizeTags(rawTags),
     body,
   };
 }

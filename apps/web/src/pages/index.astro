@@ -2,18 +2,17 @@
 import Base from "@/layouts/Base.astro";
 import ClipFeed from "@/components/ClipFeed.astro";
 import FilterBar from "@/components/FilterBar";
-import { clipKinds, collectTagCounts, sortClips } from "@/lib/clips";
+import { clipKinds, sortClips } from "@/lib/clips";
 import { getClipEntries } from "@/lib/content";
 
 const clips = sortClips(await getClipEntries());
-const tagCounts = collectTagCounts(clips);
 const kinds = clipKinds(clips);
 ---
 
 <Base title="clip" description="things i found interesting, stored." pathname="/">
-  {(kinds.length > 0 || tagCounts.length > 0) && (
+  {kinds.length > 0 && (
     <div class="page-shell">
-      <FilterBar client:load kinds={kinds} tagCounts={tagCounts} />
+      <FilterBar client:load kinds={kinds} />
     </div>
   )}
   <ClipFeed clips={clips} />

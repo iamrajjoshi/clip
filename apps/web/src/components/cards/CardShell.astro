@@ -10,7 +10,6 @@ const permalink = getClipPermalink(entry);
   class="card-surface"
   data-filter-item
   data-kind={entry.data.kind}
-  data-tags={entry.data.tags.join("|")}
 >
   <div class="flex items-center justify-between gap-4 text-[12px] text-[var(--text-muted)]">
     <span>{entry.data.kind}</span>
@@ -22,13 +21,4 @@ const permalink = getClipPermalink(entry);
     <slot />
   </div>
   <slot name="commentary" />
-  {entry.data.tags.length > 0 && (
-    <div class="mt-4 flex flex-wrap gap-2">
-      {entry.data.tags.map((tag) => (
-        <a href={`/tags/${encodeURIComponent(tag)}/`} class="tag-chip">
-          #{tag}
-        </a>
-      ))}
-    </div>
-  )}
 </article>
