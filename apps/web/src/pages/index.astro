@@ -10,7 +10,7 @@ const tagCounts = collectTagCounts(clips);
 const kinds = clipKinds(clips);
 ---
 
-<Base title="clip" description="things i found, kept here." pathname="/">
+<Base title="clip" description="things i found interesting, stored." pathname="/">
   {(kinds.length > 0 || tagCounts.length > 0) && (
     <div class="page-shell">
       <FilterBar client:load kinds={kinds} tagCounts={tagCounts} />

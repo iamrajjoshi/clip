@@ -26,27 +26,27 @@ if (entry.data.kind !== "tweet") {
         <p class="text-xl font-semibold">{entry.data.author.name}</p>
         <p class="text-sm text-[var(--text-muted)]">@{entry.data.author.handle}</p>
       </div>
-      <p class="mt-4 whitespace-pre-wrap text-base leading-[1.5]">
-        {entry.data.text}
-      </p>
-      {entry.data.media?.length ? (
-        <div class="mt-5 grid gap-3 sm:grid-cols-2">
-          {entry.data.media.map((media) => (
-            <img
-              src={media.src}
-              alt={media.alt ?? ""}
-              class="w-full border border-[var(--border)] object-cover"
-              loading="lazy"
-            />
-          ))}
-        </div>
-      ) : null}
-      <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]">
-        <a href={entry.data.url} target="_blank" rel="noreferrer">
-          open on x
-        </a>
-        <span>{formatDate(entry.data.postedAt)}</span>
+    </div>
+  </div>
+  <div class="mt-4">
+    <p class="whitespace-pre-wrap text-base leading-[1.5]">{entry.data.text}</p>
+    {entry.data.media?.length ? (
+      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        {entry.data.media.map((media) => (
+          <img
+            src={media.src}
+            alt={media.alt ?? ""}
+            class="w-full border border-[var(--border)] object-cover"
+            loading="lazy"
+          />
+        ))}
       </div>
+    ) : null}
+    <div class="mt-4 flex flex-wrap items-center gap-3 text-sm text-[var(--text-muted)]">
+      <a href={entry.data.url} target="_blank" rel="noreferrer">
+        open on x
+      </a>
+      <span>{formatDate(entry.data.postedAt)}</span>
     </div>
   </div>
   {entry.body?.trim() && (
