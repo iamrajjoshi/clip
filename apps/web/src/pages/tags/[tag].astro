@@ -1,0 +1,46 @@
+---
+import Base from "@/layouts/Base.astro";
+import ClipFeed from "@/components/ClipFeed.astro";
+import { sortClips, type ClipEntry } from "@/lib/clips";
+import { getClipEntries } from "@/lib/content";
+
+export async function getStaticPaths() {
+  const clips = await getClipEntries();
+  const tags = [...new Set(clips.flatMap((clip) => clip.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      clips: sortClips(clips.filter((clip) => clip.data.tags.includes(tag))),
+    },
+  }));
+}
+
+const { tag, clips } = Astro.props as {
+  tag: string;
+  clips: ClipEntry[];
+};
+---
+
+<Base
+  title={`#${tag}`}
+  description={`clips tagged with ${tag}`}
+  pathname={`/tags/${encodeURIComponent(tag)}/`}
+>
+  <section class="page-shell">
+    <div class="section-block pt-6">
+      <p class="section-kicker">tag archive</p>
+      <h1 class="mt-2 text-[28px] leading-[1.2] font-semibold">#{tag}</h1>
+      <p class="mt-4 max-w-[56ch] text-sm text-[var(--text-muted)]">
+        canonical page for every clip stored under this tag.
+      </p>
+      <div class="mt-4 nav-row text-sm text-[var(--text-muted)]">
+        <a href="/">back to feed</a>
+        <span class="nav-divider">|</span>
+        <span>{clips.length} match{clips.length === 1 ? "" : "es"}</span>
+      </div>
+    </div>
+  </section>
+  <ClipFeed clips={clips} emptyMessage="no clips matched this tag." />
+</Base>

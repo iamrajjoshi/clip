@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from "astro:content";
+import CardShell from "@/components/cards/CardShell.astro";
+import EntryBody from "@/components/EntryBody.astro";
+
+const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
+
+if (entry.data.kind !== "link") {
+  throw new Error("LinkCard received a non-link entry.");
+}
+---
+
+<CardShell entry={entry}>
+  <div class="grid gap-4 sm:grid-cols-[1fr_120px]">
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center gap-3 text-sm text-[var(--text-muted)]">
+        {entry.data.favicon && (
+          <img
+            src={entry.data.favicon}
+            alt=""
+            class="h-4 w-4 border border-[var(--border)] object-cover"
+            loading="lazy"
+          />
+        )}
+        <span>{entry.data.siteName ?? new URL(entry.data.url).hostname.replace(/^www\./, "")}</span>
+      </div>
+      <h2 class="mt-4 text-[28px] leading-[1.2] font-semibold">
+        <a href={entry.data.url} target="_blank" rel="noreferrer">
+          {entry.data.title}
+        </a>
+      </h2>
+      {entry.data.description && (
+        <p class="mt-3 max-w-[42rem] text-base leading-[1.5] text-[var(--text-muted)]">
+          {entry.data.description}
+        </p>
+      )}
+    </div>
+    {entry.data.ogImage && (
+      <img
+        src={entry.data.ogImage}
+        alt=""
+        class="hidden h-[96px] w-[120px] border border-[var(--border)] object-cover sm:block"
+        loading="lazy"
+      />
+    )}
+  </div>
+  {entry.body.trim() && (
+    <div slot="commentary" class="mt-4 border-t border-[var(--border)] pt-4">
+      <EntryBody entry={entry} />
+    </div>
+  )}
+</CardShell>

@@ -1,0 +1,23 @@
+{
+  "name": "@clip/cli",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "clip": "./bin/clip.mjs"
+  },
+  "scripts": {
+    "clip": "tsx src/index.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "tsx --test src/__tests__/*.test.ts"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.4.2",
+    "node-html-parser": "^7.1.0",
+    "sharp": "^0.34.5",
+    "tsx": "^4.21.0",
+    "yaml": "^2.8.3"
+  }
+}

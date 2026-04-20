@@ -1,0 +1,34 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate, getClipPermalink } from "@/lib/clips";
+
+const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
+const permalink = getClipPermalink(entry);
+---
+
+<article
+  class="card-surface"
+  data-filter-item
+  data-kind={entry.data.kind}
+  data-tags={entry.data.tags.join("|")}
+>
+  <div class="flex items-center justify-between gap-4 text-[12px] text-[var(--text-muted)]">
+    <span>{entry.data.kind}</span>
+    <a href={permalink}>
+      {formatDate(entry.data.clippedAt)}
+    </a>
+  </div>
+  <div class="mt-4">
+    <slot />
+  </div>
+  <slot name="commentary" />
+  {entry.data.tags.length > 0 && (
+    <div class="mt-4 flex flex-wrap gap-2">
+      {entry.data.tags.map((tag) => (
+        <a href={`/tags/${encodeURIComponent(tag)}/`} class="tag-chip">
+          #{tag}
+        </a>
+      ))}
+    </div>
+  )}
+</article>

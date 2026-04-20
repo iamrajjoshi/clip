@@ -1,0 +1,54 @@
+---
+import Base from "@/layouts/Base.astro";
+import LinkCard from "@/components/cards/LinkCard.astro";
+import TweetCard from "@/components/cards/TweetCard.astro";
+import ImageCard from "@/components/cards/ImageCard.astro";
+import VideoCard from "@/components/cards/VideoCard.astro";
+import NoteCard from "@/components/cards/NoteCard.astro";
+import { getClipDescription, getClipOgImage, getClipTitle, type ClipEntry } from "@/lib/clips";
+import { getClipEntries } from "@/lib/content";
+
+export async function getStaticPaths() {
+  const clips = await getClipEntries();
+
+  return clips.map((clip) => ({
+    params: { slug: clip.slug },
+    props: { clip },
+  }));
+}
+
+const { clip } = Astro.props as {
+  clip: ClipEntry;
+};
+
+const description = getClipDescription(clip);
+const image = getClipOgImage(clip);
+const title = getClipTitle(clip);
+---
+
+<Base
+  title={title}
+  description={description}
+  image={image}
+  pathname={`/clips/${clip.slug}/`}
+>
+  <section class="page-shell">
+    <div class="section-block pt-6">
+      <p class="section-kicker">clip</p>
+      <div class="mt-4 nav-row text-sm text-[var(--text-muted)]">
+        <a href="/">back to feed</a>
+        <span class="nav-divider">|</span>
+        <span>{clip.data.kind}</span>
+        <span class="nav-divider">|</span>
+        <span>{clip.slug}</span>
+      </div>
+    </div>
+    <div>
+      {clip.data.kind === "link" && <LinkCard entry={clip} />}
+      {clip.data.kind === "tweet" && <TweetCard entry={clip} />}
+      {clip.data.kind === "image" && <ImageCard entry={clip} />}
+      {clip.data.kind === "video" && <VideoCard entry={clip} />}
+      {clip.data.kind === "note" && <NoteCard entry={clip} />}
+    </div>
+  </section>
+</Base>

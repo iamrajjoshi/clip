@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #000000;
+  --bg-alt: #0a0a0a;
+  --surface: #111111;
+  --text: #ffffff;
+  --text-muted: #8a8a8a;
+  --text-dim: #5a5a5a;
+  --border: #1f1f1f;
+  --accent: #ffffff;
+  --inverse-bg: #ffffff;
+  --inverse-text: #000000;
+  --font-mono:
+    "SF Mono",
+    "JetBrains Mono",
+    "IBM Plex Mono",
+    ui-monospace,
+    "Cascadia Mono",
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+html {
+  color-scheme: dark;
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  text-rendering: geometricPrecision;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+main {
+  width: 100%;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+}
+
+button {
+  border-radius: 0;
+  border: 1px solid var(--text);
+  background: transparent;
+  color: var(--text);
+}
+
+button:hover {
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+}
+
+input,
+textarea,
+select {
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--text);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-dim);
+}
+
+hr {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+code {
+  background: var(--bg-alt);
+  padding: 2px;
+}
+
+pre {
+  margin: 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  padding: 16px;
+  border-radius: 0;
+}
+
+pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.page-shell {
+  width: min(100%, 720px);
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+.site-rule,
+.section-block,
+.card-surface {
+  border-top: 1px solid var(--border);
+}
+
+.section-block,
+.card-surface {
+  padding-block: 24px;
+}
+
+.site-header,
+.site-footer {
+  padding-block: 16px;
+}
+
+.section-kicker {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.nav-row a[aria-current="page"] {
+  text-decoration-thickness: 2px;
+}
+
+.nav-divider {
+  color: var(--text-dim);
+}
+
+.command-block {
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  padding: 16px;
+}
+
+.mono-button {
+  min-height: 32px;
+  padding: 0 16px;
+}
+
+.mono-button[data-active="true"] {
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--text);
+  padding: 0 8px;
+  min-height: 24px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.tag-chip:hover {
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+}
+
+.kind-toggle,
+.tag-toggle {
+  min-height: 32px;
+  padding: 0 16px;
+}
+
+.kind-toggle[data-active="true"],
+.tag-toggle[data-active="true"] {
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+}
+
+.markdown-body {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.markdown-body p + p {
+  margin-top: 16px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.markdown-body li + li {
+  margin-top: 8px;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+::selection {
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+}

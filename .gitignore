@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+.astro
+dist
+coverage
+*.tsbuildinfo
+apps/web/.vercel
+apps/web/.netlify
+packages/clip-cli/.tmp

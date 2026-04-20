@@ -1,0 +1,23 @@
+---
+const { clipCount, tagCount } = Astro.props as { clipCount: number; tagCount: number };
+---
+
+<section class="section-block page-shell pt-6">
+  <p class="section-kicker">run this</p>
+  <h1 class="mt-2 text-[40px] leading-[1.2] font-semibold">clip</h1>
+  <p class="mt-4 max-w-[56ch] text-base text-[var(--text-muted)]">
+    save links. save notes. write markdown. keep the feed legible.
+  </p>
+  <div class="command-block mt-4">
+    <p class="text-sm text-[var(--text-muted)]">$ pnpm clip -- &lt;url|path|-&gt;</p>
+    <p class="mt-2 text-sm text-[var(--text-dim)]">run this from the repo root. commit output only when it looks right.</p>
+  </div>
+  <div class="mt-4 flex flex-wrap gap-2 text-sm">
+    <span class="tag-chip">{clipCount} clips</span>
+    <span class="tag-chip">{tagCount} tags</span>
+    <span class="tag-chip">single-column</span>
+  </div>
+  <div class="mt-4 text-sm text-[var(--text-muted)]">
+    <p>use the filters below. open a clip. read the output.</p>
+  </div>
+</section>
