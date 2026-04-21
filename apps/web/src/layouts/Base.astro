@@ -1,8 +1,10 @@
 ---
 import "@/styles/global.css";
 
+const siteTitle = "clip";
+
 const {
-  title = "clip",
+  title = siteTitle,
   description = "things i found interesting, stored.",
   headerDescription = description,
   image,
@@ -20,6 +22,7 @@ const socialImage = image ? new URL(image, Astro.site).toString() : undefined;
 const rssFeed = new URL("/rss.xml", Astro.site).toString();
 const commitSha = import.meta.env.PUBLIC_COMMIT_SHA ?? "dev";
 const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
+const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 ---
 
 <!doctype html>
@@ -27,19 +30,19 @@ const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} | clip</title>
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#000000" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical.toString()} />
     <link rel="alternate" type="application/rss+xml" title="clip rss" href={rssFeed} />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={`${title} | clip`} />
+    <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.toString()} />
     {socialImage && <meta property="og:image" content={socialImage} />}
     <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
-    <meta name="twitter:title" content={`${title} | clip`} />
+    <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
     {socialImage && <meta name="twitter:image" content={socialImage} />}
   </head>
