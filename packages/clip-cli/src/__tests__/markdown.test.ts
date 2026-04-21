@@ -9,14 +9,15 @@ describe("serializeClip", () => {
       kind: "link",
       slug: "sample-link",
       clippedAt: new Date("2026-04-19T00:00:00.000Z"),
-      tags: ["design"],
-      url: "https://rajjoshi.me",
-      title: "sample link",
+      tags: ["github"],
+      url: "https://github.com/iamrajjoshi/clip",
+      title: "GitHub - iamrajjoshi/clip",
     });
     const markdown = serializeClip(frontmatter, "small commentary");
 
     assert.match(markdown, /kind: link/);
-    assert.match(markdown, /title: sample link/);
+    assert.match(markdown, /tags:\n  - github/);
+    assert.match(markdown, /title: GitHub - iamrajjoshi\/clip/);
     assert.match(markdown, /small commentary/);
   });
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import path from "node:path";
+import { getDefaultTagsForUrl } from "./default-tags";
 import { detectInput } from "./detect";
 import { commitAndPush } from "./git";
 import { serializeClip, writeClipFile } from "./markdown";
@@ -165,7 +166,7 @@ async function main() {
       kind: "link",
       slug,
       clippedAt,
-      tags: [],
+      tags: getDefaultTagsForUrl(detection.url),
       url: detection.url.toString(),
       title: scraped.title,
       description: scraped.description,

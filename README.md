@@ -31,7 +31,7 @@ pnpm clip -- <url|path|->
 
 - Detects the clip kind from the input
 - Scrapes metadata and downloads local assets where available
-- Prompts for tags and an optional note
+- Applies built-in tags for supported domains and optionally captures a note
 - Writes markdown into the Astro content collection
 - Commits and pushes unless `--dry-run` or `--no-push` is passed
 

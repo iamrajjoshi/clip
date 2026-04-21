@@ -29,6 +29,11 @@ describe("detectInput", () => {
     assert.equal(detection.kind, "link");
   });
 
+  it("keeps github urls on the generic link flow", async () => {
+    const detection = await detectInput("https://github.com/iamrajjoshi/clip");
+    assert.equal(detection.kind, "link");
+  });
+
   it("detects local image paths", async () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), "clip-detect-"));
     tempDirs.push(dir);
