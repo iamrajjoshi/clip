@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { clipFrontmatterSchema } from "@/content/schema";
-import { buildSearchIndex, collectTagCounts, excerpt, sortClips } from "@/lib/clips";
+import {
+  buildSearchIndex,
+  collectTagCounts,
+  excerpt,
+  getClipDescription,
+  getClipSocialImage,
+  getClipSourceLabel,
+  getClipTitle,
+  sortClips,
+} from "@/lib/clips";
 
 const baseDate = new Date("2026-04-19T00:00:00.000Z");
 
@@ -71,5 +80,20 @@ describe("clip helpers", () => {
 
   it("creates short excerpts", () => {
     assert.equal(excerpt("hello **world**", 20), "hello world");
+  });
+
+  it("cleans github repo titles and descriptions", () => {
+    const clip = makeClip("link", {
+      slug: "github-repo",
+      tags: ["github"],
+      url: "https://github.com/rohitg00/awesome-claude-design",
+      title: "GitHub - rohitg00/awesome-claude-design: Claude Design DESIGN.md prompts by aesthetic family",
+      description: "Claude Design DESIGN.md prompts by aesthetic family - rohitg00/awesome-claude-design",
+    });
+
+    assert.equal(getClipTitle(clip), "rohitg00/awesome-claude-design");
+    assert.equal(getClipDescription(clip), "Claude Design DESIGN.md prompts by aesthetic family");
+    assert.equal(getClipSourceLabel(clip), "GitHub");
+    assert.equal(getClipSocialImage(clip), "/og/github-repo.svg");
   });
 });

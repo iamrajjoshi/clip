@@ -4,11 +4,13 @@ import "@/styles/global.css";
 const {
   title = "clip",
   description = "things i found interesting, stored.",
+  headerDescription = description,
   image,
   pathname = "/",
 } = Astro.props as {
   title?: string;
   description?: string;
+  headerDescription?: string | null;
   image?: string;
   pathname?: string;
 };
@@ -44,7 +46,7 @@ const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
   <body>
     <header class="site-header page-shell">
       <p class="text-sm font-semibold">clip.rajjoshi.me</p>
-      <p class="mt-2 text-sm text-[var(--text-muted)]">{description}</p>
+      {headerDescription && <p class="mt-2 text-sm text-[var(--text-muted)]">{headerDescription}</p>}
     </header>
     <main>
       <slot />

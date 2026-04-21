@@ -2,36 +2,46 @@
 import type { CollectionEntry } from "astro:content";
 import CardShell from "@/components/cards/CardShell.astro";
 import EntryBody from "@/components/EntryBody.astro";
+import { getClipDescription, getClipSourceLabel, getClipTitle } from "@/lib/clips";
 
 const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
 
 if (entry.data.kind !== "link") {
   throw new Error("LinkCard received a non-link entry.");
 }
+
+const title = getClipTitle(entry);
+const description = getClipDescription(entry);
+const sourceLabel = getClipSourceLabel(entry);
 ---
 
 <CardShell entry={entry}>
-  <div class="grid gap-4 sm:grid-cols-[1fr_120px]">
+  <div class="grid gap-5 sm:grid-cols-[1fr_120px] sm:items-start">
     <div class="min-w-0 flex-1">
-      <div class="flex items-center gap-3 text-sm text-[var(--text-muted)]">
+      <div class="flex items-center gap-3 text-[13px] tracking-[0.02em] text-[var(--text-muted)]">
         {entry.data.favicon && (
           <img
             src={entry.data.favicon}
             alt=""
-            class="h-4 w-4 border border-[var(--border)] object-cover"
+            class="h-5 w-5 rounded-[4px] border border-[var(--border)] object-cover"
             loading="lazy"
           />
         )}
-        <span>{entry.data.siteName ?? new URL(entry.data.url).hostname.replace(/^www\./, "")}</span>
+        <span>{sourceLabel}</span>
       </div>
-      <h2 class="mt-4 text-[28px] leading-[1.2] font-semibold">
-        <a href={entry.data.url} target="_blank" rel="noreferrer">
-          {entry.data.title}
+      <h2 class="mt-4 max-w-[34rem] text-[clamp(1.9rem,7vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.045em]">
+        <a
+          href={entry.data.url}
+          target="_blank"
+          rel="noreferrer"
+          class="card-link-title break-words decoration-[1.5px] underline-offset-[0.18em] transition-colors hover:text-[var(--text-muted)] focus-visible:text-[var(--text-muted)] focus-visible:outline-none"
+        >
+          {title}
         </a>
       </h2>
-      {entry.data.description && (
-        <p class="mt-3 max-w-[42rem] text-base leading-[1.5] text-[var(--text-muted)]">
-          {entry.data.description}
+      {description && (
+        <p class="mt-4 max-w-[38rem] text-[15px] leading-[1.7] text-[var(--text-muted)]">
+          {description}
         </p>
       )}
     </div>
@@ -39,7 +49,7 @@ if (entry.data.kind !== "link") {
       <img
         src={entry.data.ogImage}
         alt=""
-        class="hidden h-[96px] w-[120px] border border-[var(--border)] object-cover sm:block"
+        class="hidden h-[96px] w-[120px] overflow-hidden rounded-[6px] border border-[var(--border)] object-cover sm:block"
         loading="lazy"
       />
     )}

@@ -197,6 +197,17 @@ pre code {
   color: var(--inverse-text);
 }
 
+.card-link-title {
+  text-decoration: none;
+}
+
+.card-link-title:hover,
+.card-link-title:focus-visible {
+  background: transparent;
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
 .markdown-body {
   color: var(--text);
   font-size: 16px;

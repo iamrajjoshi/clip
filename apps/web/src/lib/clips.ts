@@ -2,6 +2,79 @@ import type { CollectionEntry } from "astro:content";
 
 export type ClipEntry = CollectionEntry<"clips">;
 
+function normalizeHostname(rawUrl: string) {
+  try {
+    return new URL(rawUrl).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function getLinkSourceLabel(clip: ClipEntry) {
+  const hostname = normalizeHostname(clip.data.url);
+
+  if (hostname === "github.com") {
+    return "GitHub";
+  }
+
+  return clip.data.siteName ?? hostname ?? clip.data.url;
+}
+
+function getGitHubRepoLabel(rawUrl: string) {
+  try {
+    const url = new URL(rawUrl);
+    const segments = url.pathname.split("/").filter(Boolean);
+
+    if (normalizeHostname(rawUrl) !== "github.com" || segments.length < 2) {
+      return undefined;
+    }
+
+    return `${segments[0]}/${segments[1]}`;
+  } catch {
+    return undefined;
+  }
+}
+
+function getNormalizedLinkTitle(clip: ClipEntry) {
+  const title = clip.data.title.trim();
+
+  if (normalizeHostname(clip.data.url) !== "github.com") {
+    return title;
+  }
+
+  const repoLabel = getGitHubRepoLabel(clip.data.url);
+
+  if (repoLabel && title.startsWith(`GitHub - ${repoLabel}:`)) {
+    return repoLabel;
+  }
+
+  if (title.startsWith("GitHub - ")) {
+    return title.replace(/^GitHub - /, "").trim();
+  }
+
+  return title;
+}
+
+function getNormalizedLinkDescription(clip: ClipEntry) {
+  if (normalizeHostname(clip.data.url) !== "github.com") {
+    return clip.data.description ?? clip.data.siteName ?? clip.data.url;
+  }
+
+  const repoLabel = getGitHubRepoLabel(clip.data.url);
+  const description = clip.data.description?.trim();
+  const title = clip.data.title.trim();
+
+  if (description && repoLabel && description.endsWith(` - ${repoLabel}`)) {
+    return description.slice(0, -(` - ${repoLabel}`).length).trim();
+  }
+
+  if (repoLabel && title.startsWith(`GitHub - ${repoLabel}: `)) {
+    return title.slice(`GitHub - ${repoLabel}: `.length).trim();
+  }
+
+  return description ?? clip.data.siteName ?? clip.data.url;
+}
+
 export function sortClips(clips: ClipEntry[]): ClipEntry[] {
   return [...clips].sort((left, right) => {
     return right.data.clippedAt.getTime() - left.data.clippedAt.getTime();
@@ -60,7 +133,7 @@ export function excerpt(text: string, maxLength = 160) {
 export function getClipTitle(clip: ClipEntry) {
   switch (clip.data.kind) {
     case "link":
-      return clip.data.title;
+      return getNormalizedLinkTitle(clip);
     case "tweet":
       return `@${clip.data.author.handle}`;
     case "image":
@@ -75,7 +148,7 @@ export function getClipTitle(clip: ClipEntry) {
 export function getClipDescription(clip: ClipEntry) {
   switch (clip.data.kind) {
     case "link":
-      return clip.data.description ?? clip.data.siteName ?? clip.data.url;
+      return getNormalizedLinkDescription(clip);
     case "tweet":
       return excerpt(clip.data.text, 160);
     case "image":
@@ -86,6 +159,21 @@ export function getClipDescription(clip: ClipEntry) {
         : `saved from ${clip.data.provider}`;
     case "note":
       return excerpt(clip.body, 160) || "a clipped note";
+  }
+}
+
+export function getClipSourceLabel(clip: ClipEntry) {
+  switch (clip.data.kind) {
+    case "link":
+      return getLinkSourceLabel(clip);
+    case "tweet":
+      return "x";
+    case "image":
+      return "image";
+    case "video":
+      return clip.data.provider;
+    case "note":
+      return "note";
   }
 }
 
@@ -106,6 +194,10 @@ export function getClipOgImage(clip: ClipEntry) {
     case "note":
       return undefined;
   }
+}
+
+export function getClipSocialImage(clip: ClipEntry) {
+  return `/og/${clip.slug}.svg`;
 }
 
 export function buildSearchIndex(clips: ClipEntry[]) {

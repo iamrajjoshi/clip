@@ -5,7 +5,7 @@ import TweetCard from "@/components/cards/TweetCard.astro";
 import ImageCard from "@/components/cards/ImageCard.astro";
 import VideoCard from "@/components/cards/VideoCard.astro";
 import NoteCard from "@/components/cards/NoteCard.astro";
-import { getClipDescription, getClipOgImage, getClipTitle, type ClipEntry } from "@/lib/clips";
+import { getClipDescription, getClipSocialImage, getClipSourceLabel, getClipTitle, type ClipEntry } from "@/lib/clips";
 import { getClipEntries } from "@/lib/content";
 
 export async function getStaticPaths() {
@@ -22,13 +22,15 @@ const { clip } = Astro.props as {
 };
 
 const description = getClipDescription(clip);
-const image = getClipOgImage(clip);
+const image = getClipSocialImage(clip);
+const sourceLabel = getClipSourceLabel(clip);
 const title = getClipTitle(clip);
 ---
 
 <Base
   title={title}
   description={description}
+  headerDescription={null}
   image={image}
   pathname={`/clips/${clip.slug}/`}
 >
@@ -40,7 +42,7 @@ const title = getClipTitle(clip);
         <span class="nav-divider">|</span>
         <span>{clip.data.kind}</span>
         <span class="nav-divider">|</span>
-        <span>{clip.slug}</span>
+        <span>{sourceLabel}</span>
       </div>
     </div>
     <div>
