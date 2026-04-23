@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { getDefaultTagsForUrl } from "./default-tags";
 import { detectInput } from "./detect";
 import { commitAndPush } from "./git";
@@ -15,12 +16,13 @@ import { scrapeVideo } from "./scrapers/video";
 import { baseSlugFromText, datedFilename, ensureUniqueSlug } from "./slug";
 import { createLocalStorage } from "./storage";
 import type { CliOptions } from "./types";
-import { extFromContentType, fetchBuffer, pathExtFromUrl, sanitizeFilename, slugify } from "./utils";
+import { expandHomeDirectory, extFromContentType, fetchBuffer, pathExtFromUrl, sanitizeFilename, slugify } from "./utils";
 
 function printHelp() {
   console.log(`clip <url | path | ->
 
 options:
+  --repo <path> target the clip repo when running from outside the workspace
   --dry-run    print the clip that would be written without changing the repo
   --no-push    commit locally but skip git push
   --help       show this help
@@ -36,8 +38,37 @@ function parseArgs(argv: string[]): CliOptions {
 
   const positionals: string[] = [];
 
-  for (const arg of argv) {
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+
+    if (!arg) {
+      continue;
+    }
+
     if (arg === "--") {
+      continue;
+    }
+
+    if (arg === "--repo") {
+      const value = argv[index + 1];
+
+      if (!value || value.startsWith("--")) {
+        throw new Error("Missing value for --repo");
+      }
+
+      options.repo = value;
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--repo=")) {
+      const value = arg.slice("--repo=".length);
+
+      if (!value) {
+        throw new Error("Missing value for --repo");
+      }
+
+      options.repo = value;
       continue;
     }
 
@@ -108,28 +139,41 @@ async function downloadOptionalAsset({
 function commitSubject(frontmatter: ClipFrontmatter) {
   switch (frontmatter.kind) {
     case "link":
-      return frontmatter.title;
-    case "tweet":
-      return `@${frontmatter.author.handle}`;
-    case "image":
-      return frontmatter.alt ?? frontmatter.slug;
-    case "video":
-      return frontmatter.title;
-    case "note":
       return frontmatter.slug;
+    case "tweet":
+      return `${frontmatter.author.handle} tweet`;
+    case "image":
+      return `${frontmatter.slug} image`;
+    case "video":
+      return `${frontmatter.slug} video`;
+    case "note":
+      return `${frontmatter.slug} note`;
   }
+}
+
+function commitMessage(frontmatter: ClipFrontmatter) {
+  return `:sparkles: feat[clips]: add ${commitSubject(frontmatter)} clip`;
 }
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const invocationCwd = process.env.INIT_CWD ?? process.cwd();
+  const cliDir = path.dirname(fileURLToPath(import.meta.url));
 
   if (options.help || !options.input) {
     printHelp();
     return;
   }
 
-  const paths = await resolveProjectPaths(invocationCwd);
+  const explicitRepo = options.repo ?? process.env.CLIP_REPO;
+  const paths = explicitRepo
+    ? await resolveProjectPaths({
+        start: path.resolve(expandHomeDirectory(explicitRepo)),
+      })
+    : await resolveProjectPaths({
+        start: cliDir,
+        fallbackStarts: [invocationCwd],
+      });
   const detection = await detectInput(options.input, invocationCwd);
   const storage = createLocalStorage(paths);
   const clippedAt = new Date();
@@ -315,7 +359,7 @@ async function main() {
   commitAndPush({
     cwd: paths.repoRoot,
     paths: [relativeClipFile, ...relativeAssets],
-    message: `clip: ${frontmatter.kind} - ${commitSubject(frontmatter)}`,
+    message: commitMessage(frontmatter),
     noPush: options.noPush,
     dryRun: options.dryRun,
   });

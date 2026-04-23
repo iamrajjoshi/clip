@@ -1,6 +1,6 @@
 import { access } from "node:fs/promises";
 import path from "node:path";
-import type { ProjectPaths } from "./types";
+import type { ProjectPaths, ResolveProjectPathsOptions } from "./types";
 
 async function exists(filePath: string) {
   try {
@@ -11,7 +11,7 @@ async function exists(filePath: string) {
   }
 }
 
-export async function resolveProjectPaths(start = process.cwd()): Promise<ProjectPaths> {
+async function findWorkspaceRoot(start: string) {
   let current = path.resolve(start);
 
   while (true) {
@@ -19,12 +19,7 @@ export async function resolveProjectPaths(start = process.cwd()): Promise<Projec
     const hasWorkspace = await exists(path.join(current, "pnpm-workspace.yaml"));
 
     if (hasGit && hasWorkspace) {
-      return {
-        repoRoot: current,
-        contentDir: path.join(current, "apps/web/src/content/clips"),
-        publicDir: path.join(current, "apps/web/public"),
-        clipsAssetDir: path.join(current, "apps/web/public/clips"),
-      };
+      return current;
     }
 
     const parent = path.dirname(current);
@@ -33,6 +28,32 @@ export async function resolveProjectPaths(start = process.cwd()): Promise<Projec
     }
 
     current = parent;
+  }
+
+  return undefined;
+}
+
+function projectPathsFromRoot(repoRoot: string): ProjectPaths {
+  return {
+    repoRoot,
+    contentDir: path.join(repoRoot, "apps/web/src/content/clips"),
+    publicDir: path.join(repoRoot, "apps/web/public"),
+    clipsAssetDir: path.join(repoRoot, "apps/web/public/clips"),
+  };
+}
+
+export async function resolveProjectPaths({
+  start = process.cwd(),
+  fallbackStarts = [],
+}: ResolveProjectPathsOptions = {}): Promise<ProjectPaths> {
+  const candidates = [start, ...fallbackStarts];
+
+  for (const candidate of candidates) {
+    const repoRoot = await findWorkspaceRoot(candidate);
+
+    if (repoRoot) {
+      return projectPathsFromRoot(repoRoot);
+    }
   }
 
   throw new Error("Could not find the clip workspace root from the current directory.");

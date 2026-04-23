@@ -19,6 +19,14 @@ pnpm test
 pnpm clip -- <url|path|->
 ```
 
+For the one-command flow, run this once from the repo root:
+
+```bash
+pnpm install:cli
+```
+
+After that, `clip <url|path|->` works from any directory. If you install the CLI some other way, point it at the repo with `CLIP_REPO=~/code/clip` or `clip --repo ~/code/clip <input>`.
+
 ## Content Model
 
 - Content files live in `apps/web/src/content/clips/`
@@ -33,7 +41,16 @@ pnpm clip -- <url|path|->
 - Scrapes metadata and downloads local assets where available
 - Applies built-in tags for supported domains and optionally captures a note
 - Writes markdown into the Astro content collection
-- Commits and pushes unless `--dry-run` or `--no-push` is passed
+- Adds, commits, and pushes by default unless `--dry-run` or `--no-push` is passed
+
+Examples:
+
+```bash
+clip https://example.com/article
+clip https://x.com/someone/status/1234567890
+clip --repo ~/code/clip https://example.com/article
+CLIP_REPO=~/code/clip clip https://example.com/article
+```
 
 ## Deployment
 

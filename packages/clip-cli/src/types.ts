@@ -21,6 +21,7 @@ export type CliOptions = {
   dryRun: boolean;
   noPush: boolean;
   help: boolean;
+  repo?: string;
   input?: string;
 };
 
@@ -29,4 +30,9 @@ export type ProjectPaths = {
   contentDir: string;
   publicDir: string;
   clipsAssetDir: string;
+};
+
+export type ResolveProjectPathsOptions = {
+  start?: string;
+  fallbackStarts?: string[];
 };
