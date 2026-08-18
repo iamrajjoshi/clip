@@ -62,10 +62,7 @@ export default function TypewriterLabel({
         const size = style.fontSize;
         const weight = style.fontWeight;
         const fontStyle = style.fontStyle;
-        const family = style.fontFamily
-          .split(",")[0]
-          .trim()
-          .replace(/['"]/g, "");
+        const family = style.fontFamily.split(",")[0].trim().replace(/['"]/g, "");
         const parts: string[] = [];
         if (fontStyle && fontStyle !== "normal") parts.push(fontStyle);
         if (weight && weight !== "400") parts.push(weight);
@@ -164,8 +161,7 @@ export default function TypewriterLabel({
               display: "inline-block",
               width: charWidths[i] ?? undefined,
               opacity: visibleCount > i ? 1 : 0,
-              transform:
-                visibleCount > i ? "translateY(0)" : "translateY(4px)",
+              transform: visibleCount > i ? "translateY(0)" : "translateY(4px)",
               transition: "opacity 0.1s ease, transform 0.1s ease",
             }}
           >

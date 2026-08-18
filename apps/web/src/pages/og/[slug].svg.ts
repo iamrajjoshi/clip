@@ -77,7 +77,7 @@ function buildOgSvg(clip: ClipEntry) {
   const description = excerpt(getClipDescription(clip), 220);
   const sourceLabel =
     clip.data.kind === "link"
-      ? clip.data.siteName ?? new URL(clip.data.url).hostname.replace(/^www\./, "")
+      ? (clip.data.siteName ?? new URL(clip.data.url).hostname.replace(/^www\./, ""))
       : clip.data.kind;
   const titleLines = wrapText(title, 26).slice(0, 3);
   const descriptionLines = wrapText(description, 52).slice(0, 4);

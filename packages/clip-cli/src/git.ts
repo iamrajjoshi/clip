@@ -36,10 +36,14 @@ export function commitAndPush({
     return;
   }
 
-  const upstreamCheck = spawnSync("git", ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], {
-    cwd,
-    stdio: "ignore",
-  });
+  const upstreamCheck = spawnSync(
+    "git",
+    ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+    {
+      cwd,
+      stdio: "ignore",
+    },
+  );
 
   if (upstreamCheck.status === 0) {
     runGit(["push"], cwd);

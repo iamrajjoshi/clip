@@ -12,13 +12,7 @@
   --inverse-bg: #ffffff;
   --inverse-text: #000000;
   --font-mono:
-    "SF Mono",
-    "JetBrains Mono",
-    "IBM Plex Mono",
-    ui-monospace,
-    "Cascadia Mono",
-    Menlo,
-    Consolas,
+    "SF Mono", "JetBrains Mono", "IBM Plex Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas,
     monospace;
 }
 

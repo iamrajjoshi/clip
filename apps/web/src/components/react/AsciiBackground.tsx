@@ -79,11 +79,7 @@ function computeOpacity(particle: Particle): number {
   return maxOpacity;
 }
 
-export default function AsciiBackground({
-  className,
-}: {
-  className?: string;
-}) {
+export default function AsciiBackground({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const frameCountRef = useRef(0);
@@ -92,9 +88,7 @@ export default function AsciiBackground({
 
   const initParticles = useCallback(
     (width: number, height: number) => {
-      const count = Math.floor(
-        randomRange(PARTICLE_COUNT_MIN, PARTICLE_COUNT_MAX)
-      );
+      const count = Math.floor(randomRange(PARTICLE_COUNT_MIN, PARTICLE_COUNT_MAX));
       const particles: Particle[] = [];
       for (let i = 0; i < count; i++) {
         if (reducedMotion) {
@@ -110,7 +104,7 @@ export default function AsciiBackground({
       }
       particlesRef.current = particles;
     },
-    [reducedMotion]
+    [reducedMotion],
   );
 
   useEffect(() => {

@@ -21,6 +21,7 @@
 - `pnpm build`
 - `pnpm lint`
 - `pnpm test`
+- `pnpm format:check`
 - `pnpm clip -- <input>`
 
 ## Content Conventions
@@ -29,6 +30,8 @@
 - One markdown file per clip in `apps/web/src/content/clips/`
 - Assets live in `apps/web/public/clips/<slug>/`
 - Copy stays lowercase-first and cards remain native to the site
+- TypeScript variables and functions use camelCase; types and components use PascalCase.
+- Test files use the `*.test.ts` suffix and should avoid shared mutable state.
 
 ## CLI Flow
 

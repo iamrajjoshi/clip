@@ -64,23 +64,26 @@ export default function TextScramble({
   const containerRef = useRef<HTMLElement | null>(null);
   const [font, setFont] = useState<string | null>(null);
 
-  const refCallback = useCallback((node: HTMLElement | null) => {
-    containerRef.current = node;
-    if (node && fontsReady) {
-      const style = getComputedStyle(node);
-      const size = style.fontSize;
-      const weight = style.fontWeight;
-      const fontStyle = style.fontStyle;
-      const family = style.fontFamily.split(",")[0].trim().replace(/['"]/g, "");
-      // Build CSS font shorthand: [style] [weight] size family
-      const parts: string[] = [];
-      if (fontStyle && fontStyle !== "normal") parts.push(fontStyle);
-      if (weight && weight !== "400") parts.push(weight);
-      parts.push(size);
-      parts.push(family);
-      setFont(parts.join(" "));
-    }
-  }, [fontsReady]);
+  const refCallback = useCallback(
+    (node: HTMLElement | null) => {
+      containerRef.current = node;
+      if (node && fontsReady) {
+        const style = getComputedStyle(node);
+        const size = style.fontSize;
+        const weight = style.fontWeight;
+        const fontStyle = style.fontStyle;
+        const family = style.fontFamily.split(",")[0].trim().replace(/['"]/g, "");
+        // Build CSS font shorthand: [style] [weight] size family
+        const parts: string[] = [];
+        if (fontStyle && fontStyle !== "normal") parts.push(fontStyle);
+        if (weight && weight !== "400") parts.push(weight);
+        parts.push(size);
+        parts.push(family);
+        setFont(parts.join(" "));
+      }
+    },
+    [fontsReady],
+  );
 
   // Measure character widths and initialize state when font is ready
   useEffect(() => {
@@ -177,11 +180,7 @@ export default function TextScramble({
       Tag,
       { className, ref: refCallback },
       // Render the text invisibly so the element exists for font measurement
-      createElement(
-        "span",
-        { style: { visibility: "hidden" } },
-        children,
-      ),
+      createElement("span", { style: { visibility: "hidden" } }, children),
     );
   }
 

@@ -16,7 +16,7 @@ describe("serializeClip", () => {
     const markdown = serializeClip(frontmatter, "small commentary");
 
     assert.match(markdown, /kind: link/);
-    assert.match(markdown, /tags:\n  - github/);
+    assert.match(markdown, /tags:\n {2}- github/);
     assert.match(markdown, /title: GitHub - iamrajjoshi\/clip/);
     assert.match(markdown, /small commentary/);
   });

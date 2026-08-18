@@ -174,13 +174,7 @@ export default function DitheredLogo({ src, size = 128, className }: Props) {
 
   if (reducedMotion) {
     return (
-      <img
-        src={src}
-        alt="pixel art octopus"
-        width={size}
-        height={size}
-        className={className}
-      />
+      <img src={src} alt="pixel art octopus" width={size} height={size} className={className} />
     );
   }
 

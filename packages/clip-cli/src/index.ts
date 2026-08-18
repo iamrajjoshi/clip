@@ -16,7 +16,14 @@ import { scrapeVideo } from "./scrapers/video";
 import { baseSlugFromText, datedFilename, ensureUniqueSlug } from "./slug";
 import { createLocalStorage } from "./storage";
 import type { CliOptions } from "./types";
-import { expandHomeDirectory, extFromContentType, fetchBuffer, pathExtFromUrl, sanitizeFilename, slugify } from "./utils";
+import {
+  expandHomeDirectory,
+  extFromContentType,
+  fetchBuffer,
+  pathExtFromUrl,
+  sanitizeFilename,
+  slugify,
+} from "./utils";
 
 function printHelp() {
   console.log(`clip <url | path | ->
@@ -120,7 +127,8 @@ async function downloadOptionalAsset({
   }
 
   const guessedExt = pathExtFromUrl(url);
-  const safeBase = sanitizeFilename(path.basename(fallbackName, path.extname(fallbackName))) || "asset";
+  const safeBase =
+    sanitizeFilename(path.basename(fallbackName, path.extname(fallbackName))) || "asset";
 
   if (dryRun) {
     return `/clips/${slug}/${safeBase}${guessedExt || path.extname(fallbackName)}`;
@@ -128,10 +136,14 @@ async function downloadOptionalAsset({
 
   try {
     const { buffer, contentType } = await fetchBuffer(url);
-    const resolvedExt = guessedExt || extFromContentType(contentType) || path.extname(fallbackName) || ".bin";
+    const resolvedExt =
+      guessedExt || extFromContentType(contentType) || path.extname(fallbackName) || ".bin";
     return await storage.writeBuffer(slug, `${safeBase}${resolvedExt}`, buffer);
   } catch (error) {
-    console.warn(`warning: could not download ${url}:`, error instanceof Error ? error.message : error);
+    console.warn(
+      `warning: could not download ${url}:`,
+      error instanceof Error ? error.message : error,
+    );
     return undefined;
   }
 }
@@ -354,7 +366,9 @@ async function main() {
 
   const clipFile = await writeClipFile(paths.contentDir, filename, markdown);
   const relativeClipFile = path.relative(paths.repoRoot, clipFile);
-  const relativeAssets = assetPathsToStage.map((assetPath) => path.relative(paths.repoRoot, assetPath));
+  const relativeAssets = assetPathsToStage.map((assetPath) =>
+    path.relative(paths.repoRoot, assetPath),
+  );
 
   commitAndPush({
     cwd: paths.repoRoot,

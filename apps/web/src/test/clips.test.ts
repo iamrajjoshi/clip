@@ -19,18 +19,18 @@ function makeClip(kind: "note" | "link", overrides: Record<string, unknown> = {}
   const data =
     kind === "note"
       ? clipFrontmatterSchema.parse({
-        kind: "note",
-        slug,
-        clippedAt: baseDate,
-        tags: ["notes"],
-        ...overrides,
-      })
+          kind: "note",
+          slug,
+          clippedAt: baseDate,
+          tags: ["notes"],
+          ...overrides,
+        })
       : clipFrontmatterSchema.parse({
-        kind: "link",
-        slug,
-        clippedAt: baseDate,
-        tags: ["design"],
-        url: "https://example.com",
+          kind: "link",
+          slug,
+          clippedAt: baseDate,
+          tags: ["design"],
+          url: "https://example.com",
           title: "example",
           ...overrides,
         });
@@ -49,9 +49,18 @@ function makeClip(kind: "note" | "link", overrides: Record<string, unknown> = {}
 
 describe("clip helpers", () => {
   it("sorts clips by clippedAt descending", () => {
-    const newer = makeClip("note", { slug: "newer", clippedAt: new Date("2026-04-20T00:00:00.000Z") });
-    const older = makeClip("link", { slug: "older", clippedAt: new Date("2026-04-18T00:00:00.000Z") });
-    assert.deepEqual(sortClips([older, newer]).map((clip) => clip.slug), ["newer", "older"]);
+    const newer = makeClip("note", {
+      slug: "newer",
+      clippedAt: new Date("2026-04-20T00:00:00.000Z"),
+    });
+    const older = makeClip("link", {
+      slug: "older",
+      clippedAt: new Date("2026-04-18T00:00:00.000Z"),
+    });
+    assert.deepEqual(
+      sortClips([older, newer]).map((clip) => clip.slug),
+      ["newer", "older"],
+    );
   });
 
   it("collects tag counts", () => {
@@ -87,8 +96,10 @@ describe("clip helpers", () => {
       slug: "github-repo",
       tags: ["github"],
       url: "https://github.com/rohitg00/awesome-claude-design",
-      title: "GitHub - rohitg00/awesome-claude-design: Claude Design DESIGN.md prompts by aesthetic family",
-      description: "Claude Design DESIGN.md prompts by aesthetic family - rohitg00/awesome-claude-design",
+      title:
+        "GitHub - rohitg00/awesome-claude-design: Claude Design DESIGN.md prompts by aesthetic family",
+      description:
+        "Claude Design DESIGN.md prompts by aesthetic family - rohitg00/awesome-claude-design",
     });
 
     assert.equal(getClipTitle(clip), "rohitg00/awesome-claude-design");
