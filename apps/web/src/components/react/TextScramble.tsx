@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback, createElement } from "react";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { getFontShorthand, measureCharWidths } from "./text-measure";
 
 type TextScrambleProps = {
   children: string;
@@ -22,13 +23,6 @@ const SCRAMBLE_INTERVAL_MS = 50;
 
 function randomScrambleChar(): string {
   return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-}
-
-function measureCharWidths(text: string, font: string): number[] {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d")!;
-  ctx.font = font;
-  return Array.from(text).map((char) => ctx.measureText(char).width);
 }
 
 export default function TextScramble({
@@ -68,18 +62,7 @@ export default function TextScramble({
     (node: HTMLElement | null) => {
       containerRef.current = node;
       if (node && fontsReady) {
-        const style = getComputedStyle(node);
-        const size = style.fontSize;
-        const weight = style.fontWeight;
-        const fontStyle = style.fontStyle;
-        const family = style.fontFamily.split(",")[0].trim().replace(/['"]/g, "");
-        // Build CSS font shorthand: [style] [weight] size family
-        const parts: string[] = [];
-        if (fontStyle && fontStyle !== "normal") parts.push(fontStyle);
-        if (weight && weight !== "400") parts.push(weight);
-        parts.push(size);
-        parts.push(family);
-        setFont(parts.join(" "));
+        setFont(getFontShorthand(node));
       }
     },
     [fontsReady],

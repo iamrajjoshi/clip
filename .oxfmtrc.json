@@ -1,0 +1,16 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    ".git",
+    "node_modules",
+    "dist",
+    ".astro",
+    "coverage",
+    "apps/web/public/clips",
+    "pnpm-lock.yaml"
+  ]
+}

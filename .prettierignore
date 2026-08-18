@@ -1,7 +1,0 @@
-.git
-node_modules
-dist
-.astro
-coverage
-apps/web/public/clips
-pnpm-lock.yaml
