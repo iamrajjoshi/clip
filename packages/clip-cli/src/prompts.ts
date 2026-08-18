@@ -47,11 +47,7 @@ export async function collectPrompts(existingBody = "") {
     });
 
     if (wantsNote) {
-      body = await openEditor([
-        "# add your note here",
-        "",
-        "",
-      ].join("\n"));
+      body = await openEditor(["# add your note here", "", ""].join("\n"));
 
       if (body.startsWith("# add your note here")) {
         body = body.replace(/^# add your note here/, "").trim();

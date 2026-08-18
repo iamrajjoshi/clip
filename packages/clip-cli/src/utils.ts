@@ -105,10 +105,12 @@ export async function fetchBuffer(url: string) {
 }
 
 export function normalizeTags(input: string) {
-  return [...new Set(
-    input
-      .split(",")
-      .map((value) => value.trim().toLowerCase())
-      .filter(Boolean),
-  )];
+  return [
+    ...new Set(
+      input
+        .split(",")
+        .map((value) => value.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  ];
 }

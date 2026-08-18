@@ -82,7 +82,9 @@ export function processImage(
     for (let x = 0; x < outW; x++) {
       const idx = (y * outW + x) * 4;
       const pixIdx = y * outW + x;
-      const r = pixels[idx], g = pixels[idx + 1], b = pixels[idx + 2];
+      const r = pixels[idx],
+        g = pixels[idx + 1],
+        b = pixels[idx + 2];
       const blurredAlpha = pixels[idx + 3] / 255;
       alpha[pixIdx] = alphaData[idx + 3];
 
@@ -91,9 +93,7 @@ export function processImage(
       rgb[pixIdx * 3 + 1] = alphaData[idx + 1];
       rgb[pixIdx * 3 + 2] = alphaData[idx + 2];
 
-      let luma = blurredAlpha > 0.01
-        ? (0.299 * r + 0.587 * g + 0.114 * b) / blurredAlpha
-        : 0;
+      let luma = blurredAlpha > 0.01 ? (0.299 * r + 0.587 * g + 0.114 * b) / blurredAlpha : 0;
       if (contrast !== 0) luma = contrastFactor * (luma - 128) + 128;
       if (gamma !== 1.0) luma = 255 * Math.pow(Math.max(0, luma / 255), 1 / gamma);
       grayscale[pixIdx] = Math.max(0, Math.min(255, Math.round(luma)));
@@ -228,15 +228,16 @@ export function updateDots(
   const shockMult = shockwaves.length > 0 ? 1 + 0.5 * (shockwaves.length - 1) : 0;
 
   for (let i = 0; i < count; i++) {
-    let fx = 0, fy = 0;
+    let fx = 0,
+      fy = 0;
 
     if (mouseActive) {
-      const vx = (baseX[i] + dx[i]) - mouseX;
-      const vy = (baseY[i] + dy[i]) - mouseY;
+      const vx = baseX[i] + dx[i] - mouseX;
+      const vy = baseY[i] + dy[i] - mouseY;
       const d2 = vx * vx + vy * vy;
       if (d2 > 0.1 && d2 < MOUSE_RADIUS_SQ) {
         const d = Math.sqrt(d2);
-        const f = (1 - d / MOUSE_RADIUS);
+        const f = 1 - d / MOUSE_RADIUS;
         const force = f * f * f * MOUSE_FORCE_PEAK;
         fx += (vx / d) * force;
         fy += (vy / d) * force;

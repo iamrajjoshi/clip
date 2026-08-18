@@ -26,6 +26,9 @@ describe("slug helpers", () => {
   });
 
   it("builds dated filenames", () => {
-    assert.equal(datedFilename(new Date("2026-04-19T00:00:00.000Z"), "sample"), "2026-04-19-sample.md");
+    assert.equal(
+      datedFilename(new Date("2026-04-19T00:00:00.000Z"), "sample"),
+      "2026-04-19-sample.md",
+    );
   });
 });

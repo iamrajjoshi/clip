@@ -16,6 +16,7 @@ pnpm dev
 pnpm build
 pnpm lint
 pnpm test
+pnpm format:check
 pnpm clip -- <url|path|->
 ```
 
@@ -26,6 +27,16 @@ pnpm install:cli
 ```
 
 After that, `clip <url|path|->` works from any directory. If you install the CLI some other way, point it at the repo with `CLIP_REPO=~/code/clip` or `clip --repo ~/code/clip <input>`.
+
+To enable the repository's local pre-commit checks:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The checks run formatting validation, linting, and tests. See
+[`docs/architecture.md`](docs/architecture.md) and
+[`runbooks/README.md`](runbooks/README.md) for system flow and deployment recovery.
 
 ## Content Model
 

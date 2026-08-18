@@ -1,6 +1,7 @@
 import type { CollectionEntry } from "astro:content";
 
 export type ClipEntry = CollectionEntry<"clips">;
+type LinkClipData = Extract<ClipEntry["data"], { kind: "link" }>;
 
 function normalizeHostname(rawUrl: string) {
   try {
@@ -10,14 +11,14 @@ function normalizeHostname(rawUrl: string) {
   }
 }
 
-function getLinkSourceLabel(clip: ClipEntry) {
-  const hostname = normalizeHostname(clip.data.url);
+function getLinkSourceLabel(data: LinkClipData) {
+  const hostname = normalizeHostname(data.url);
 
   if (hostname === "github.com") {
     return "GitHub";
   }
 
-  return clip.data.siteName ?? hostname ?? clip.data.url;
+  return data.siteName ?? hostname ?? data.url;
 }
 
 function getGitHubRepoLabel(rawUrl: string) {
@@ -35,14 +36,14 @@ function getGitHubRepoLabel(rawUrl: string) {
   }
 }
 
-function getNormalizedLinkTitle(clip: ClipEntry) {
-  const title = clip.data.title.trim();
+function getNormalizedLinkTitle(data: LinkClipData) {
+  const title = data.title.trim();
 
-  if (normalizeHostname(clip.data.url) !== "github.com") {
+  if (normalizeHostname(data.url) !== "github.com") {
     return title;
   }
 
-  const repoLabel = getGitHubRepoLabel(clip.data.url);
+  const repoLabel = getGitHubRepoLabel(data.url);
 
   if (repoLabel && title.startsWith(`GitHub - ${repoLabel}:`)) {
     return repoLabel;
@@ -55,24 +56,24 @@ function getNormalizedLinkTitle(clip: ClipEntry) {
   return title;
 }
 
-function getNormalizedLinkDescription(clip: ClipEntry) {
-  if (normalizeHostname(clip.data.url) !== "github.com") {
-    return clip.data.description ?? clip.data.siteName ?? clip.data.url;
+function getNormalizedLinkDescription(data: LinkClipData) {
+  if (normalizeHostname(data.url) !== "github.com") {
+    return data.description ?? data.siteName ?? data.url;
   }
 
-  const repoLabel = getGitHubRepoLabel(clip.data.url);
-  const description = clip.data.description?.trim();
-  const title = clip.data.title.trim();
+  const repoLabel = getGitHubRepoLabel(data.url);
+  const description = data.description?.trim();
+  const title = data.title.trim();
 
   if (description && repoLabel && description.endsWith(` - ${repoLabel}`)) {
-    return description.slice(0, -(` - ${repoLabel}`).length).trim();
+    return description.slice(0, -` - ${repoLabel}`.length).trim();
   }
 
   if (repoLabel && title.startsWith(`GitHub - ${repoLabel}: `)) {
     return title.slice(`GitHub - ${repoLabel}: `.length).trim();
   }
 
-  return description ?? clip.data.siteName ?? clip.data.url;
+  return description ?? data.siteName ?? data.url;
 }
 
 export function sortClips(clips: ClipEntry[]): ClipEntry[] {
@@ -133,7 +134,7 @@ export function excerpt(text: string, maxLength = 160) {
 export function getClipTitle(clip: ClipEntry) {
   switch (clip.data.kind) {
     case "link":
-      return getNormalizedLinkTitle(clip);
+      return getNormalizedLinkTitle(clip.data);
     case "tweet":
       return `@${clip.data.author.handle}`;
     case "image":
@@ -148,7 +149,7 @@ export function getClipTitle(clip: ClipEntry) {
 export function getClipDescription(clip: ClipEntry) {
   switch (clip.data.kind) {
     case "link":
-      return getNormalizedLinkDescription(clip);
+      return getNormalizedLinkDescription(clip.data);
     case "tweet":
       return excerpt(clip.data.text, 160);
     case "image":
@@ -165,7 +166,7 @@ export function getClipDescription(clip: ClipEntry) {
 export function getClipSourceLabel(clip: ClipEntry) {
   switch (clip.data.kind) {
     case "link":
-      return getLinkSourceLabel(clip);
+      return getLinkSourceLabel(clip.data);
     case "tweet":
       return "x";
     case "image":
