@@ -14,10 +14,10 @@
     "test": "tsx --test src/__tests__/*.test.ts"
   },
   "dependencies": {
-    "@inquirer/prompts": "^8.4.2",
-    "node-html-parser": "^7.1.0",
-    "sharp": "^0.34.5",
-    "tsx": "^4.21.0",
-    "yaml": "^2.8.3"
+    "@inquirer/prompts": "^8.5.2",
+    "node-html-parser": "^9.0.1",
+    "sharp": "^0.35.3",
+    "tsx": "^4.23.12",
+    "yaml": "^2.9.0"
   }
 }
