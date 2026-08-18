@@ -8,7 +8,7 @@
     "prebuild": "rm -rf .astro node_modules/.astro dist",
     "build": "astro build",
     "check": "astro check",
-    "lint": "eslint .",
+    "lint": "oxlint src && eslint .",
     "test": "tsx --test src/test/clips.test.ts"
   },
   "dependencies": {

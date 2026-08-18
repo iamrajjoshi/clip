@@ -10,7 +10,7 @@
     "clip": "tsx src/index.ts",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "oxlint src",
     "test": "tsx --test src/__tests__/*.test.ts"
   },
   "dependencies": {
