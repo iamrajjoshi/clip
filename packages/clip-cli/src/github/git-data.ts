@@ -114,7 +114,7 @@ export class GitDataApi {
   async createTree(baseTreeSha: string, entries: TreeEntry[]): Promise<GitTree> {
     return this.client.requestRepoJson<GitTree>("POST", "/git/trees", {
       base_tree: baseTreeSha,
-      entries,
+      tree: entries,
     });
   }
 
