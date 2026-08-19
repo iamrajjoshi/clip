@@ -34,7 +34,7 @@ To enable the repository's local pre-commit checks:
 git config core.hooksPath .githooks
 ```
 
-The checks run formatting validation, linting, and tests. See
+The checks run formatting validation, linting, unused dependency detection, and tests. See
 [`docs/architecture.md`](docs/architecture.md) and
 [`runbooks/README.md`](runbooks/README.md) for system flow and deployment recovery.
 
