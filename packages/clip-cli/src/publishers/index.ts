@@ -33,6 +33,12 @@ export function createPublisher(options: PublisherFactoryOptions): Publisher {
     );
   }
 
+  if (!options.github.repo) {
+    throw new Error(
+      "No repository configured. Run `clip init` to create one from a template, or `clip config set github.repo <name>` to use an existing repo.",
+    );
+  }
+
   return new GitHubApiPublisher({
     token: options.token as string,
     owner: options.github.owner,

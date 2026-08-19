@@ -464,6 +464,25 @@ describe("createPublisher factory", () => {
     );
   });
 
+  it("throws a helpful error when github.repo is empty (VAL-REMOTE-031)", () => {
+    assert.throws(
+      () =>
+        createPublisher({
+          repoRoot: "/tmp/fake",
+          local: false,
+          token: "ghp_testtoken",
+          github: { owner: "owner", repo: "", branch: "main" },
+        }),
+      (err: unknown) => {
+        assert.ok(err instanceof Error);
+        assert.ok(err.message.includes("No repository configured"));
+        assert.ok(err.message.includes("clip init"));
+        assert.ok(err.message.includes("clip config set github.repo"));
+        return true;
+      },
+    );
+  });
+
   it("returned publisher can be used as the Publisher interface", async () => {
     const dir = await createTempDir();
     const publisher: Publisher = createPublisher({
