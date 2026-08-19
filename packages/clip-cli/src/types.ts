@@ -21,6 +21,7 @@ export type CliOptions = {
   dryRun: boolean;
   noPush: boolean;
   help: boolean;
+  local: boolean;
   repo?: string;
   input?: string;
 };
