@@ -10,6 +10,9 @@
     },
     "packages/clip-cli": {
       "project": ["src/**/*"]
+    },
+    "packages/clip-schema": {
+      "project": ["src/**/*"]
     }
   }
 }
