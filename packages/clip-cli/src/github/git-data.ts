@@ -59,6 +59,15 @@ export interface CreateCommitResponse {
 
 export type BlobEncoding = "utf-8" | "base64";
 
+export interface RepoInfo {
+  id: number;
+  name: string;
+  full_name: string;
+  default_branch: string;
+  size: number;
+  empty: boolean;
+}
+
 // ---------------------------------------------------------------------------
 // GitDataApi
 // ---------------------------------------------------------------------------
@@ -140,5 +149,10 @@ export class GitDataApi {
   /** GET /user — verify the token and return the authenticated user. */
   async getUser(): Promise<GitHubUser> {
     return this.client.requestJson<GitHubUser>("GET", "/user");
+  }
+
+  /** GET /repos/{owner}/{repo} — check if the repo exists and get its info. */
+  async getRepoInfo(): Promise<RepoInfo> {
+    return this.client.requestRepoJson<RepoInfo>("GET", "");
   }
 }

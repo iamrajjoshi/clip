@@ -28,12 +28,19 @@ export interface GitHubUser {
 export class GitHubApiError extends Error {
   readonly status: number;
   readonly responseBody: unknown;
+  readonly responseHeaders: Record<string, string | null>;
 
-  constructor(message: string, status: number, responseBody?: unknown) {
+  constructor(
+    message: string,
+    status: number,
+    responseBody?: unknown,
+    responseHeaders?: Record<string, string | null>,
+  ) {
     super(message);
     this.name = "GitHubApiError";
     this.status = status;
     this.responseBody = responseBody;
+    this.responseHeaders = responseHeaders ?? {};
   }
 }
 
@@ -97,7 +104,12 @@ export class GitHubClient {
         body: body !== undefined ? JSON.stringify(body) : undefined,
       });
     } catch {
-      throw new GitHubApiError("Could not connect to GitHub. Check your network connection.", 0);
+      throw new GitHubApiError(
+        "Could not connect to GitHub. Check your network connection.",
+        0,
+        undefined,
+        {},
+      );
     }
 
     return response;
@@ -151,6 +163,12 @@ export class GitHubClient {
       // Response body is not JSON — use the generic status-based message
     }
 
-    throw new GitHubApiError(errorMessage, response.status, errorBody);
+    const responseHeaders: Record<string, string | null> = {
+      "x-ratelimit-remaining": response.headers.get("x-ratelimit-remaining"),
+      "x-ratelimit-reset": response.headers.get("x-ratelimit-reset"),
+      "x-ratelimit-limit": response.headers.get("x-ratelimit-limit"),
+    };
+
+    throw new GitHubApiError(errorMessage, response.status, errorBody, responseHeaders);
   }
 }
