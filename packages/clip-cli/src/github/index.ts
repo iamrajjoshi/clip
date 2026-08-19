@@ -12,4 +12,5 @@ export type {
   CreateCommitResponse,
   BlobEncoding,
   RepoInfo,
+  GeneratedRepo,
 } from "./git-data";

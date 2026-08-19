@@ -9,6 +9,7 @@ The `clip` CLI is published as the public npm package **`@clip/cli`**. After a o
 - [Install](#install)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
+- [Creating a Repository with `clip init`](#creating-a-repository-with-clip-init)
 - [Usage](#usage)
   - [Remote mode](#remote-mode)
   - [Local mode](#local-mode)
@@ -52,7 +53,8 @@ What happens:
 4. The CLI polls GitHub until you authorize (or the code expires).
 5. On success, GitHub returns an access token scoped to `repo`.
 6. The CLI verifies the token with `GET /user` and prints `Logged in as <login>`.
-7. The token is stored securely (see [Security](#security)).
+7. The CLI automatically records your GitHub login as `github.owner` in [configuration](#configuration), so remote publishing targets your own account without any manual setup.
+8. The token is stored securely (see [Security](#security)).
 
 The token is never printed, logged, or written to the repository.
 
@@ -87,12 +89,14 @@ Default configuration:
 {
   "mode": "remote",
   "github": {
-    "owner": "iamrajjoshi",
-    "repo": "clip",
+    "owner": "",
+    "repo": "",
     "branch": "main"
   }
 }
 ```
+
+`github.owner` is left empty by default and is **automatically set during `clip login`** from the authenticated user's GitHub login (see [Authentication](#authentication)). `github.repo` is empty by default and is set automatically by `clip init` (see [Creating a Repository with `clip init`](#creating-a-repository-with-clip-init)) or manually with `clip config set github.repo <name>`.
 
 ### clip config
 
@@ -122,6 +126,39 @@ clip config set github.branch develop
 ```
 
 The config file is written atomically (temp file + rename) so an interrupted write leaves the previous file intact.
+
+## Creating a Repository with `clip init`
+
+`clip init` creates a brand-new clip site repository on your GitHub account from the [`iamrajjoshi/clip`](https://github.com/iamrajjoshi/clip) template, so you can go from `clip login` to publishing clips without manually forking or cloning anything.
+
+```bash
+clip init
+```
+
+What happens:
+
+1. The CLI checks that you are logged in. If no token is stored, it exits with `Run \`clip login\` first.`
+2. It prompts for a repository name (default `clip`).
+3. It calls GitHub's "create from template" API (`POST /repos/iamrajjoshi/clip/generate`) with `{ name: <repo-name>, private: false }`, creating a **public** repository under your account that inherits the full Astro site structure, content directories, and deploy workflow.
+4. On success, it **auto-configures `github.repo`** in [configuration](#configuration) to the new repo name, so the very next `clip <url>` publishes to it.
+5. It prints the new repository's URL.
+
+If a repository with that name already exists on your account, GitHub returns `422` and the CLI exits with `Repository already exists. Try a different name.` Any other error (network, permissions, etc.) exits non-zero with a meaningful message and never leaks your token.
+
+After `clip init`, your config looks like:
+
+```json
+{
+  "mode": "remote",
+  "github": {
+    "owner": "<your-login>",
+    "repo": "<chosen-name>",
+    "branch": "main"
+  }
+}
+```
+
+`github.owner` is set automatically by `clip login`; `clip init` only needs to set `github.repo`.
 
 ## Usage
 
@@ -309,17 +346,18 @@ If GitHub is unreachable, the CLI exits non-zero with `Could not connect to GitH
 
 ### Commands
 
-| Command                         | Description                                                              |
-| ------------------------------- | ------------------------------------------------------------------------ |
-| `clip login`                    | Authenticate with GitHub via OAuth Device Flow and store the token.      |
-| `clip logout`                   | Delete the stored token from Keychain and/or the credentials file.       |
-| `clip config`                   | Show the current configuration (sensitive keys redacted).                |
-| `clip config get <key>`         | Print a config value (dot-notation supported, e.g. `github.branch`).     |
-| `clip config set <key> <value>` | Set a config value (dot-notation supported; only defined keys accepted). |
-| `clip <url>`                    | Clip a URL (link, tweet, or video) and publish it.                       |
-| `clip <path>`                   | Clip a local image file and publish it.                                  |
-| `clip -`                        | Clip a note from stdin and publish it.                                   |
-| `clip` (no args)                | Print help and exit 0.                                                   |
+| Command                         | Description                                                                                                                           |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `clip login`                    | Authenticate with GitHub via OAuth Device Flow and store the token.                                                                   |
+| `clip logout`                   | Delete the stored token from Keychain and/or the credentials file.                                                                    |
+| `clip config`                   | Show the current configuration (sensitive keys redacted).                                                                             |
+| `clip config get <key>`         | Print a config value (dot-notation supported, e.g. `github.branch`).                                                                  |
+| `clip config set <key> <value>` | Set a config value (dot-notation supported; only defined keys accepted).                                                              |
+| `clip init`                     | Create a new clip site repository from the `iamrajjoshi/clip` template and auto-configure `github.repo`. Requires `clip login` first. |
+| `clip <url>`                    | Clip a URL (link, tweet, or video) and publish it.                                                                                    |
+| `clip <path>`                   | Clip a local image file and publish it.                                                                                               |
+| `clip -`                        | Clip a note from stdin and publish it.                                                                                                |
+| `clip` (no args)                | Print help and exit 0.                                                                                                                |
 
 ### Flags
 

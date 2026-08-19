@@ -155,4 +155,37 @@ export class GitDataApi {
   async getRepoInfo(): Promise<RepoInfo> {
     return this.client.requestRepoJson<RepoInfo>("GET", "");
   }
+
+  /**
+   * POST /repos/{templateOwner}/{templateRepo}/generate — create a new
+   * repository from a template. The request is made against the root API
+   * (not the configured repo scope) because the template owner/repo differ
+   * from the client's configured `owner`/`repo`.
+   *
+   * `templateOwner`/`templateRepo` identify the source template repository,
+   * and `body` carries the new repo options (e.g. `name`, `private`).
+   * Returns the newly created repository's info.
+   */
+  async generateRepo(
+    templateOwner: string,
+    templateRepo: string,
+    body: { name: string; private?: boolean; description?: string },
+  ): Promise<GeneratedRepo> {
+    return this.client.requestJson<GeneratedRepo>(
+      "POST",
+      `/repos/${templateOwner}/${templateRepo}/generate`,
+      body,
+    );
+  }
+}
+
+/** Response from POST /repos/{owner}/{repo}/generate (created repository). */
+export interface GeneratedRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  html_url: string;
+  clone_url: string;
+  default_branch: string;
+  private: boolean;
 }
