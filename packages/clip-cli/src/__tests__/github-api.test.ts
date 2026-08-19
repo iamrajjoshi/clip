@@ -601,7 +601,7 @@ describe("GitDataApi", () => {
   });
 
   describe("createTree", () => {
-    it("sends POST /repos/{owner}/{repo}/git/trees with base_tree and entries", async () => {
+    it("sends POST /repos/{owner}/{repo}/git/trees with base_tree and tree", async () => {
       const { fetch, requests } = createMockFetch(createFlowHandler());
       const client = new GitHubClient({
         token: TEST_TOKEN,
@@ -626,11 +626,11 @@ describe("GitDataApi", () => {
       assert.ok(requests[0]!.url.endsWith("/git/trees"));
       const body = requests[0]!.bodyJson as {
         base_tree: string;
-        entries: TreeEntry[];
+        tree: TreeEntry[];
       };
       assert.equal(body.base_tree, BASE_TREE_SHA);
-      assert.equal(body.entries.length, 1);
-      assert.equal(body.entries[0]!.mode, "100644");
+      assert.equal(body.tree.length, 1);
+      assert.equal(body.tree[0]!.mode, "100644");
     });
 
     it("accepts nested paths with 100644 mode", async () => {
@@ -653,9 +653,9 @@ describe("GitDataApi", () => {
       ];
       await api.createTree(BASE_TREE_SHA, entries);
 
-      const body = requests[0]!.bodyJson as { entries: TreeEntry[] };
-      assert.equal(body.entries[0]!.path, "apps/web/public/clips/test-slug/favicon.png");
-      assert.equal(body.entries[0]!.mode, "100644");
+      const body = requests[0]!.bodyJson as { tree: TreeEntry[] };
+      assert.equal(body.tree[0]!.path, "apps/web/public/clips/test-slug/favicon.png");
+      assert.equal(body.tree[0]!.mode, "100644");
     });
   });
 
@@ -1049,10 +1049,10 @@ describe("GitHubApiPublisher", () => {
       assert.ok(treeRequest);
       const body = treeRequest!.bodyJson as {
         base_tree: string;
-        entries: TreeEntry[];
+        tree: TreeEntry[];
       };
       assert.equal(body.base_tree, BASE_TREE_SHA);
-      const mdEntry = body.entries.find((e) => e.path === markdownPath);
+      const mdEntry = body.tree.find((e) => e.path === markdownPath);
       assert.ok(mdEntry);
       assert.equal(mdEntry.mode, "100644");
       assert.equal(mdEntry.type, "blob");
@@ -1074,8 +1074,8 @@ describe("GitHubApiPublisher", () => {
 
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { entries: TreeEntry[] };
-      const assetEntry = body.entries.find((e) => e.path === assetPath);
+      const body = treeRequest!.bodyJson as { tree: TreeEntry[] };
+      const assetEntry = body.tree.find((e) => e.path === assetPath);
       assert.ok(assetEntry);
       assert.equal(assetEntry.mode, "100644");
       assert.equal(assetEntry.type, "blob");
@@ -1164,8 +1164,8 @@ describe("GitHubApiPublisher", () => {
 
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { entries: TreeEntry[] };
-      assert.equal(body.entries.length, 1);
+      const body = treeRequest!.bodyJson as { tree: TreeEntry[] };
+      assert.equal(body.tree.length, 1);
     });
   });
 
@@ -1196,8 +1196,8 @@ describe("GitHubApiPublisher", () => {
       // 1 tree with 4 entries
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const treeBody = treeRequest!.bodyJson as { entries: TreeEntry[] };
-      assert.equal(treeBody.entries.length, 4);
+      const treeBody = treeRequest!.bodyJson as { tree: TreeEntry[] };
+      assert.equal(treeBody.tree.length, 4);
 
       // 1 commit
       const commitRequests = requests.filter(

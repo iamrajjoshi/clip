@@ -375,13 +375,13 @@ describe("GitHubApiPublisher error handling", () => {
 
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { base_tree: string; entries: { path: string }[] };
+      const body = treeRequest!.bodyJson as { base_tree: string; tree: { path: string }[] };
 
       // base_tree preserves existing files
       assert.equal(body.base_tree, BASE_TREE_SHA);
 
       // The markdown entry at the same path overwrites the existing one
-      const mdEntry = body.entries.find((e) => e.path === markdownPath);
+      const mdEntry = body.tree.find((e) => e.path === markdownPath);
       assert.ok(mdEntry, "markdown entry present at the same path");
     });
 
@@ -400,9 +400,9 @@ describe("GitHubApiPublisher error handling", () => {
 
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { entries: { path: string }[] };
+      const body = treeRequest!.bodyJson as { tree: { path: string }[] };
 
-      const mdEntries = body.entries.filter((e) => e.path === markdownPath);
+      const mdEntries = body.tree.filter((e) => e.path === markdownPath);
       assert.equal(mdEntries.length, 1, "exactly one entry for the markdown path");
     });
   });
@@ -427,9 +427,9 @@ describe("GitHubApiPublisher error handling", () => {
 
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { entries: { path: string; sha: string }[] };
+      const body = treeRequest!.bodyJson as { tree: { path: string; sha: string }[] };
 
-      const assetEntry = body.entries.find((e) => e.path === assetPath);
+      const assetEntry = body.tree.find((e) => e.path === assetPath);
       assert.ok(assetEntry, "asset entry present at the same path");
       assert.equal(assetEntry.sha, ASSET_BLOB_SHA, "points to the new blob SHA");
     });
@@ -1849,8 +1849,8 @@ describe("GitHubApiPublisher error handling", () => {
       // Verify tree contains the asset entry
       const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
       assert.ok(treeRequest);
-      const treeBody = treeRequest!.bodyJson as { entries: { path: string }[] };
-      const assetEntry = treeBody.entries.find(
+      const treeBody = treeRequest!.bodyJson as { tree: { path: string }[] };
+      const assetEntry = treeBody.tree.find(
         (e) => e.path === "apps/web/public/clips/test-slug/image.jpg",
       );
       assert.ok(assetEntry, "asset in tree");
