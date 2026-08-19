@@ -1,3 +1,4 @@
+import { GitHubApiPublisher } from "./github-api";
 import { LocalGitPublisher } from "./local-git";
 import type { Publisher } from "./types";
 
@@ -7,6 +8,8 @@ export interface PublisherFactoryOptions {
   local: boolean;
   /** GitHub access token or null when not logged in. */
   token: string | null;
+  /** GitHub repository configuration (required for remote mode). */
+  github?: { owner: string; repo: string; branch: string };
 }
 
 /**
@@ -14,9 +17,6 @@ export interface PublisherFactoryOptions {
  *
  * - No token or --local flag → LocalGitPublisher (existing git behavior)
  * - Token and no --local → GitHubApiPublisher (remote mode)
- *
- * The remote publisher is implemented in a separate feature; until then
- * requesting remote mode throws a clear, actionable error.
  */
 export function createPublisher(options: PublisherFactoryOptions): Publisher {
   const useLocal = options.local || !options.token;
@@ -25,12 +25,24 @@ export function createPublisher(options: PublisherFactoryOptions): Publisher {
     return new LocalGitPublisher({ repoRoot: options.repoRoot });
   }
 
-  // GitHubApiPublisher will be implemented in a subsequent feature.
-  throw new Error(
-    "Remote publishing is not yet available. Use --local for local mode, or run 'clip login' first.",
-  );
+  if (!options.github) {
+    throw new Error(
+      "GitHub configuration (owner, repo, branch) is required for remote mode. " +
+        "Run 'clip config set github.owner <owner>', 'clip config set github.repo <repo>', " +
+        "and 'clip config set github.branch <branch>'.",
+    );
+  }
+
+  return new GitHubApiPublisher({
+    token: options.token as string,
+    owner: options.github.owner,
+    repo: options.github.repo,
+    branch: options.github.branch,
+  });
 }
 
+export { GitHubApiPublisher } from "./github-api";
+export type { GitHubApiPublisherOptions } from "./github-api";
 export { LocalGitPublisher } from "./local-git";
 export type { GitExec, LocalGitPublisherOptions } from "./local-git";
 export type { Publisher, PublishParams, PublishResult, Asset } from "./types";
