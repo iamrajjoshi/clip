@@ -41,8 +41,8 @@ export function createPublisher(options: PublisherFactoryOptions): Publisher {
   });
 }
 
-export { GitHubApiPublisher } from "./github-api";
-export type { GitHubApiPublisherOptions } from "./github-api";
+export { GitHubApiPublisher, GitHubPublishError, MAX_ATTEMPTS } from "./github-api";
+export type { GitHubApiPublisherOptions, PublishErrorKind } from "./github-api";
 export { LocalGitPublisher } from "./local-git";
 export type { GitExec, LocalGitPublisherOptions } from "./local-git";
 export type { Publisher, PublishParams, PublishResult, Asset } from "./types";

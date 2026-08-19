@@ -11,4 +11,5 @@ export type {
   TreeEntryType,
   CreateCommitResponse,
   BlobEncoding,
+  RepoInfo,
 } from "./git-data";

@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { GitHubApiError, GitHubClient } from "../github/client";
 import { GitDataApi } from "../github/git-data";
 import type { TreeEntry } from "../github/git-data";
-import { GitHubApiPublisher } from "../publishers/github-api";
+import { GitHubApiPublisher, GitHubPublishError } from "../publishers/github-api";
 import { createPublisher } from "../publishers/index";
 import { LocalGitPublisher } from "../publishers/local-git";
 import type { Asset, PublishParams, Publisher } from "../publishers/types";
@@ -1292,9 +1292,8 @@ describe("GitHubApiPublisher", () => {
         await publisher.publish(makeParams());
         assert.fail("should have thrown");
       } catch (err) {
-        assert.ok(err instanceof GitHubApiError);
+        assert.ok(err instanceof GitHubPublishError);
         assert.ok(!err.message.includes(TEST_TOKEN));
-        assert.ok(!String(err.responseBody).includes(TEST_TOKEN));
       }
     });
 
@@ -1316,7 +1315,7 @@ describe("GitHubApiPublisher", () => {
         await publisher.publish(makeParams());
         assert.fail("should have thrown");
       } catch (err) {
-        assert.ok(err instanceof GitHubApiError);
+        assert.ok(err instanceof GitHubPublishError);
         assert.ok(!err.message.includes(TEST_TOKEN));
       }
     });
