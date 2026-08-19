@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises"
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, it } from "node:test";
+import { GitHubApiPublisher } from "../publishers/github-api";
 import { LocalGitPublisher, type GitExec } from "../publishers/local-git";
 import { createPublisher } from "../publishers/index";
 import type { Asset, Publisher, PublishParams, PublishResult } from "../publishers/types";
@@ -441,7 +442,17 @@ describe("createPublisher factory", () => {
     assert.ok(publisher instanceof LocalGitPublisher);
   });
 
-  it("throws for remote mode (token, no --local) until GitHubApiPublisher is implemented", () => {
+  it("returns GitHubApiPublisher when token and github config are provided", () => {
+    const publisher = createPublisher({
+      repoRoot: "/tmp/fake",
+      local: false,
+      token: "ghp_testtoken",
+      github: { owner: "owner", repo: "repo", branch: "main" },
+    });
+    assert.ok(publisher instanceof GitHubApiPublisher);
+  });
+
+  it("throws when token is present but github config is missing", () => {
     assert.throws(
       () =>
         createPublisher({
@@ -449,7 +460,7 @@ describe("createPublisher factory", () => {
           local: false,
           token: "ghp_testtoken",
         }),
-      /not yet available/i,
+      /GitHub configuration/i,
     );
   });
 
