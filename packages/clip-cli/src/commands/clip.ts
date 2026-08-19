@@ -2,13 +2,15 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { KeychainStore } from "../auth";
+import { ConfigStore, type ClipConfig } from "../config";
 import { getDefaultTagsForUrl } from "../default-tags";
 import { detectInput } from "../detect";
+import { detectMode, type PublishMode } from "../mode";
 import { serializeClip } from "../markdown";
 import { resolveProjectPaths } from "../paths";
 import { collectPrompts } from "../prompts";
 import { createPublisher } from "../publishers";
-import type { Asset } from "../publishers/types";
+import type { Publisher, PublishResult, Asset, PublishParams } from "../publishers/types";
 import { clipFrontmatterSchema, type ClipFrontmatter } from "../schema";
 import { inspectImage } from "../scrapers/image";
 import { scrapeLink } from "../scrapers/og";
@@ -172,8 +174,104 @@ function commitMessage(frontmatter: ClipFrontmatter) {
   return `:sparkles: feat[clips]: add ${commitSubject(frontmatter)} clip`;
 }
 
+/**
+ * Prepared clip data — the result of detect → scrape → prompt → validate →
+ * generate, ready to be published.
+ */
+export interface PreparedClip {
+  frontmatter: ClipFrontmatter;
+  markdown: string;
+  filename: string;
+  markdownPath: string;
+  assets: Asset[];
+}
+
+/**
+ * Injectable dependencies for the clip command. Used in tests to mock the
+ * token store, config store, and publisher factory without touching real
+ * Keychain, config files, or network.
+ */
+export interface ClipCommandDeps {
+  keychain?: { read(): Promise<string | null> };
+  configStore?: { read(): Promise<ClipConfig> };
+  createPublisherFn?: typeof createPublisher;
+}
+
+/**
+ * Executes the publishing step: determines the mode (local vs remote), reads
+ * config for remote mode, handles dry-run previews, warns about --no-push in
+ * remote mode, and reports the mode in the output.
+ *
+ * Extracted from runClipCommand so the mode-detection and publishing logic can
+ * be tested independently of the detect/scrape/prompt flow.
+ */
+export async function executePublishing(
+  prepared: PreparedClip,
+  options: Pick<CliOptions, "dryRun" | "noPush" | "local">,
+  repoRoot: string,
+  deps?: ClipCommandDeps,
+): Promise<PublishResult> {
+  // Check for token to determine publishing mode (local vs remote)
+  let token: string | null = null;
+  try {
+    const keychain = deps?.keychain ?? new KeychainStore();
+    token = await keychain.read();
+  } catch {
+    // If token check fails, default to local mode
+    token = null;
+  }
+
+  const mode: PublishMode = detectMode({ local: options.local, token });
+
+  // --no-push is only meaningful in local mode; warn in remote mode
+  if (mode === "remote" && options.noPush) {
+    console.warn("warning: --no-push is only meaningful in local mode; ignored in remote mode");
+  }
+
+  if (options.dryRun) {
+    console.log(`mode: ${mode}`);
+    console.log(`# ${prepared.filename}\n`);
+    console.log(prepared.markdown);
+    return { mode, committed: false, pushed: false, location: "" };
+  }
+
+  // Read config for remote mode (owner, repo, branch)
+  let github: { owner: string; repo: string; branch: string } | undefined;
+  if (mode === "remote") {
+    const configStore = deps?.configStore ?? new ConfigStore();
+    const config = await configStore.read();
+    github = config.github;
+  }
+
+  const factory = deps?.createPublisherFn ?? createPublisher;
+  const publisher: Publisher = factory({
+    repoRoot,
+    local: options.local,
+    token,
+    github,
+  });
+
+  const publishParams: PublishParams = {
+    slug: prepared.frontmatter.slug,
+    markdownContent: prepared.markdown,
+    markdownFilename: prepared.filename,
+    markdownPath: prepared.markdownPath,
+    assets: prepared.assets,
+    commitMessage: commitMessage(prepared.frontmatter),
+    dryRun: options.dryRun,
+    noPush: options.noPush,
+  };
+
+  const result = await publisher.publish(publishParams);
+
+  console.log(
+    `saved ${prepared.frontmatter.kind} clip: ${prepared.filename} (mode: ${result.mode})`,
+  );
+  return result;
+}
+
 /** Run the clip command: detect → scrape → prompt → validate → publish. */
-export async function runClipCommand(args: string[]): Promise<void> {
+export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Promise<void> {
   const options = parseArgs(args);
   const invocationCwd = process.env.INIT_CWD ?? process.cwd();
   const cliDir = path.dirname(fileURLToPath(import.meta.url));
@@ -364,38 +462,10 @@ export async function runClipCommand(args: string[]): Promise<void> {
   const markdown = serializeClip(frontmatter, body);
   const markdownPath = path.relative(paths.repoRoot, path.join(paths.contentDir, filename));
 
-  if (options.dryRun) {
-    console.log(`# ${filename}\n`);
-    console.log(markdown);
-    return;
-  }
-
-  // Check for token to determine publishing mode (local vs remote)
-  let token: string | null = null;
-  try {
-    const keychain = new KeychainStore();
-    token = await keychain.read();
-  } catch {
-    // If token check fails, default to local mode
-    token = null;
-  }
-
-  const publisher = createPublisher({
-    repoRoot: paths.repoRoot,
-    local: options.local,
-    token,
-  });
-
-  await publisher.publish({
-    slug: frontmatter.slug,
-    markdownContent: markdown,
-    markdownFilename: filename,
-    markdownPath,
-    assets,
-    commitMessage: commitMessage(frontmatter),
-    dryRun: options.dryRun,
-    noPush: options.noPush,
-  });
-
-  console.log(`saved ${frontmatter.kind} clip: ${filename}`);
+  await executePublishing(
+    { frontmatter, markdown, filename, markdownPath, assets },
+    options,
+    paths.repoRoot,
+    deps,
+  );
 }
