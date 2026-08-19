@@ -386,6 +386,44 @@ describe("ConfigStore", () => {
       const output = JSON.stringify(printable);
       assert.ok(!output.includes("fake-sensitive-token-placeholder"));
     });
+
+    it("redacts private_key field in printable output", async () => {
+      const dir = await createTempDir();
+      const clipDir = path.join(dir, "clip");
+      await mkdir(clipDir, { recursive: true });
+      await writeFile(
+        path.join(clipDir, "config.json"),
+        JSON.stringify({
+          mode: "remote",
+          github: { owner: "test", repo: "clip", branch: "main" },
+          private_key: "fake-private-key-placeholder",
+        }),
+      );
+      const store = new ConfigStore({ configDir: dir });
+      const printable = await store.toPrintable();
+      assert.equal(printable.private_key, "[redacted]");
+      assert.equal(printable.mode, "remote");
+      const github = printable.github as Record<string, unknown>;
+      assert.equal(github.owner, "test");
+    });
+
+    it("printable does not include raw private_key value", async () => {
+      const dir = await createTempDir();
+      const clipDir = path.join(dir, "clip");
+      await mkdir(clipDir, { recursive: true });
+      await writeFile(
+        path.join(clipDir, "config.json"),
+        JSON.stringify({
+          mode: "remote",
+          github: { owner: "test", repo: "clip", branch: "main" },
+          private_key: "fake-private-key-placeholder",
+        }),
+      );
+      const store = new ConfigStore({ configDir: dir });
+      const printable = await store.toPrintable();
+      const output = JSON.stringify(printable);
+      assert.ok(!output.includes("fake-private-key-placeholder"));
+    });
   });
 
   describe("valid keys", () => {
@@ -529,6 +567,33 @@ describe("runConfigCommand", () => {
       );
       const { stdout } = await captureOutput(() => runConfigCommand([]));
       assert.ok(!stdout.includes("fake-leak-test-token-placeholder"));
+      assert.ok(stdout.includes("[redacted]"));
+    } finally {
+      if (oldXdg === undefined) {
+        delete process.env.XDG_CONFIG_HOME;
+      } else {
+        process.env.XDG_CONFIG_HOME = oldXdg;
+      }
+    }
+  });
+
+  it("does not print private_key in config output", async () => {
+    const oldXdg = process.env.XDG_CONFIG_HOME;
+    const dir = await createTempDir();
+    process.env.XDG_CONFIG_HOME = dir;
+    try {
+      const clipDir = path.join(dir, "clip");
+      await mkdir(clipDir, { recursive: true });
+      await writeFile(
+        path.join(clipDir, "config.json"),
+        JSON.stringify({
+          mode: "remote",
+          github: { owner: "test", repo: "clip", branch: "main" },
+          private_key: "fake-leak-test-private-key-placeholder",
+        }),
+      );
+      const { stdout } = await captureOutput(() => runConfigCommand([]));
+      assert.ok(!stdout.includes("fake-leak-test-private-key-placeholder"));
       assert.ok(stdout.includes("[redacted]"));
     } finally {
       if (oldXdg === undefined) {
