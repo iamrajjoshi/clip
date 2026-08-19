@@ -24,6 +24,7 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm duplicates
+      - run: pnpm knip
       - run: pnpm test
       - run: pnpm check
       - run: pnpm build

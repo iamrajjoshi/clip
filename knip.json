@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [".github/workflows/*.yml", ".githooks/pre-commit"],
+      "project": ["*.{ts,mjs,js}"]
+    },
+    "apps/web": {
+      "project": ["src/**/*.{astro,css,ts,tsx,js,mjs}"]
+    },
+    "packages/clip-cli": {
+      "project": ["src/**/*"]
+    }
+  }
+}
