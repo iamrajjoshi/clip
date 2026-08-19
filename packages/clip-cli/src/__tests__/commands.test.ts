@@ -12,6 +12,7 @@ interface CallLog {
   login: number;
   logout: number;
   config: number;
+  init: number;
   clip: number;
 }
 
@@ -25,6 +26,9 @@ function createMockHandlers(log: CallLog): CommandHandlers {
     },
     config: async (_args: string[]) => {
       log.config += 1;
+    },
+    init: async () => {
+      log.init += 1;
     },
     clip: async (_args: string[]) => {
       log.clip += 1;
@@ -51,7 +55,7 @@ function captureOutput(fn: () => Promise<void>): Promise<{ stdout: string }> {
 }
 
 function createCallLog(): CallLog {
-  return { login: 0, logout: 0, config: 0, clip: 0 };
+  return { login: 0, logout: 0, config: 0, init: 0, clip: 0 };
 }
 
 // ---------------------------------------------------------------------------
@@ -103,6 +107,7 @@ describe("routeCommand", () => {
           receivedArgs = args;
           log.config += 1;
         },
+        init: async () => {},
         clip: async () => {},
       };
       await routeCommand(["config", "get", "github.owner"], handlers);
@@ -122,6 +127,7 @@ describe("routeCommand", () => {
           receivedArgs = args;
           log.config += 1;
         },
+        init: async () => {},
         clip: async () => {},
       };
       await routeCommand(["config", "set", "github.branch", "develop"], handlers);
@@ -287,6 +293,21 @@ describe("routeCommand", () => {
     });
   });
 
+  describe("VAL-CMD-015: clip init routes to the init command", () => {
+    it("routes 'init' to the init handler", async () => {
+      const log = createCallLog();
+      await routeCommand(["init"], createMockHandlers(log));
+      assert.equal(log.init, 1);
+      assert.equal(log.clip, 0, "clip handler must not be called for init");
+    });
+
+    it("does not treat 'init' as clip input", async () => {
+      const log = createCallLog();
+      await routeCommand(["init"], createMockHandlers(log));
+      assert.equal(log.clip, 0);
+    });
+  });
+
   describe("VAL-CMD-014: clip with no args prints help", () => {
     it("bare clip invocation prints help, exit 0", async () => {
       const { stdout } = await captureOutput(() => routeCommand([]));
@@ -311,6 +332,7 @@ describe("routeCommand", () => {
       assert.ok(HELP_TEXT.includes("login"));
       assert.ok(HELP_TEXT.includes("logout"));
       assert.ok(HELP_TEXT.includes("config"));
+      assert.ok(HELP_TEXT.includes("init"));
     });
 
     it("contains all flags", () => {

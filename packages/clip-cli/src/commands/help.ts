@@ -7,11 +7,13 @@ usage:
   clip config                    show current configuration
   clip config get <key>          show a specific config value
   clip config set <key> <value>  set a config value
+  clip init                      create a new clip site repository from the template
 
 commands:
   login                          authenticate via GitHub OAuth Device Flow
   logout                         remove the stored GitHub token
   config                         view or set configuration
+  init                           create a new GitHub repo from the clip template and auto-configure it
   <url | path | ->               clip a URL, local image file, or stdin note
 
 flags:

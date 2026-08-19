@@ -6,11 +6,12 @@ export interface CommandHandlers {
   login: () => Promise<void>;
   logout: () => Promise<void>;
   config: (args: string[]) => Promise<void>;
+  init: () => Promise<void>;
   clip: (args: string[]) => Promise<void>;
 }
 
 /** Known subcommand names that are intercepted by the router. */
-const SUBCOMMANDS = new Set(["login", "logout", "config"]);
+const SUBCOMMANDS = new Set(["login", "logout", "config", "init"]);
 
 /**
  * Default command handlers that dynamically import each command module.
@@ -31,6 +32,10 @@ const defaultHandlers: CommandHandlers = {
     const { runConfigCommand } = await import("./config");
     await runConfigCommand(args);
   },
+  init: async () => {
+    const { runInitCommand } = await import("./init");
+    await runInitCommand();
+  },
   clip: async (args: string[]) => {
     const { runClipCommand } = await import("./clip");
     await runClipCommand(args);
@@ -48,12 +53,13 @@ const defaultHandlers: CommandHandlers = {
  * - `login` → login command (extra args ignored by login)
  * - `logout` → logout command
  * - `config` → config command (remaining args passed through)
+ * - `init` → init command (creates a repo from template)
  * - Anything else → clip command (all args passed through; unknown
  *   subcommands are treated as clip input, not routing errors)
  *
- * `login`, `logout`, and `config` are only intercepted when they appear as
- * the first argument. This means `clip login <url>` routes to login (not
- * clip) and `clip config <url>` routes to config (not clip).
+ * `login`, `logout`, `config`, and `init` are only intercepted when they
+ * appear as the first argument. This means `clip login <url>` routes to login
+ * (not clip) and `clip config <url>` routes to config (not clip).
  */
 export async function routeCommand(
   args: string[],
@@ -63,6 +69,7 @@ export async function routeCommand(
     login: handlers?.login ?? defaultHandlers.login,
     logout: handlers?.logout ?? defaultHandlers.logout,
     config: handlers?.config ?? defaultHandlers.config,
+    init: handlers?.init ?? defaultHandlers.init,
     clip: handlers?.clip ?? defaultHandlers.clip,
   };
 
@@ -98,6 +105,10 @@ export async function routeCommand(
     }
     if (firstArg === "config") {
       await h.config(args.slice(1));
+      return;
+    }
+    if (firstArg === "init") {
+      await h.init();
       return;
     }
   }
