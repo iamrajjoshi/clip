@@ -171,6 +171,18 @@ async function main() {
   const args = process.argv.slice(2);
   const firstArg = args[0];
 
+  if (firstArg === "login") {
+    const { runLoginCommand } = await import("./commands/login");
+    await runLoginCommand();
+    return;
+  }
+
+  if (firstArg === "logout") {
+    const { runLogoutCommand } = await import("./commands/logout");
+    await runLogoutCommand();
+    return;
+  }
+
   if (firstArg === "config") {
     const { runConfigCommand } = await import("./commands/config");
     await runConfigCommand(args.slice(1));
