@@ -17,7 +17,7 @@
   },
   "scripts": {
     "clip": "tsx src/index.ts",
-    "build": "tsup && sed -i '' -E '/^\\/\\/ (src\\/|\\.\\.\\/).*\\.(ts|js)$/d' dist/index.js && chmod +x dist/index.js",
+    "build": "tsup",
     "prepublishOnly": "pnpm run build",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",

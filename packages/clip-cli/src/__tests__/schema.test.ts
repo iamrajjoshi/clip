@@ -197,7 +197,7 @@ describe("@clip/schema package", () => {
       assert.equal(result.success, false);
     });
 
-    it("rejects a tweet with empty tag strings", () => {
+    it("rejects a clip with empty tag strings", () => {
       const result = clipFrontmatterSchema.safeParse({
         kind: "note",
         slug: "test",
