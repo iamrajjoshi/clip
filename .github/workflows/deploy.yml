@@ -40,6 +40,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

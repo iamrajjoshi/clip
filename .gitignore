@@ -10,3 +10,6 @@ coverage
 apps/web/.vercel
 apps/web/.netlify
 packages/clip-cli/.tmp
+
+# Sentry Config File
+.env.sentry-build-plugin
