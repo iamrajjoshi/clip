@@ -168,7 +168,16 @@ function commitMessage(frontmatter: ClipFrontmatter) {
 }
 
 async function main() {
-  const options = parseArgs(process.argv.slice(2));
+  const args = process.argv.slice(2);
+  const firstArg = args[0];
+
+  if (firstArg === "config") {
+    const { runConfigCommand } = await import("./commands/config");
+    await runConfigCommand(args.slice(1));
+    return;
+  }
+
+  const options = parseArgs(args);
   const invocationCwd = process.env.INIT_CWD ?? process.cwd();
   const cliDir = path.dirname(fileURLToPath(import.meta.url));
 
