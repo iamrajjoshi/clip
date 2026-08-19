@@ -1,9 +1,8 @@
 // OAuth Device Flow implementation for GitHub authentication.
 // The token is never printed, logged, or included in error messages.
 
-// TODO: Replace with real GitHub OAuth App client_id once created.
 // This is a public value (no secret needed for Device Flow).
-export const CLIENT_ID = "Iv1.0000000000000000";
+export const CLIENT_ID = "Ov23liD8qcgO98yL2y50";
 
 const DEVICE_CODE_URL = "https://github.com/login/device/code";
 const TOKEN_URL = "https://github.com/login/oauth/access_token";
