@@ -15,8 +15,8 @@ export interface ClipConfig {
 export const DEFAULT_CONFIG: ClipConfig = {
   mode: "remote",
   github: {
-    owner: "iamrajjoshi",
-    repo: "clip",
+    owner: "",
+    repo: "",
     branch: "main",
   },
 };

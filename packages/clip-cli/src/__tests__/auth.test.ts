@@ -7,6 +7,7 @@ import { AuthError, KeychainStore } from "../auth/keychain";
 import { CLIENT_ID, OAuthClient, OAuthError } from "../auth/oauth";
 import { runLoginCommand } from "../commands/login";
 import { runLogoutCommand } from "../commands/logout";
+import { ConfigStore } from "../config/store";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -758,7 +759,8 @@ describe("runLoginCommand", () => {
       platform: "linux",
       interactive: true,
     });
-    const { stdout } = await captureOutput(() => runLoginCommand({ oauth, keychain }));
+    const configStore = new ConfigStore({ configDir: dir });
+    const { stdout } = await captureOutput(() => runLoginCommand({ oauth, keychain, configStore }));
     assert.ok(stdout.includes(TEST_USER_CODE), "stdout should contain user_code");
     assert.ok(stdout.includes(TEST_VERIFICATION_URI), "stdout should contain verification_uri");
   });
@@ -785,7 +787,8 @@ describe("runLoginCommand", () => {
       platform: "darwin",
       interactive: true,
     });
-    await runLoginCommand({ oauth, keychain });
+    const configStore = new ConfigStore({ configDir: dir });
+    await runLoginCommand({ oauth, keychain, configStore });
     assert.ok(addCalled, "should have called security add-generic-password");
   });
 
@@ -802,7 +805,8 @@ describe("runLoginCommand", () => {
       platform: "darwin",
       interactive: true,
     });
-    await runLoginCommand({ oauth, keychain });
+    const configStore = new ConfigStore({ configDir: dir });
+    await runLoginCommand({ oauth, keychain, configStore });
     const credPath = path.join(dir, "clip", "credentials.json");
     const content = await readFile(credPath, "utf8");
     const data = JSON.parse(content) as { token: string };
@@ -844,7 +848,8 @@ describe("runLoginCommand", () => {
       platform: "linux",
       interactive: true,
     });
-    await runLoginCommand({ oauth, keychain });
+    const configStore = new ConfigStore({ configDir: dir });
+    await runLoginCommand({ oauth, keychain, configStore });
     assert.ok(userUrlCalled, "should have called GET /user");
   });
 
@@ -859,7 +864,10 @@ describe("runLoginCommand", () => {
       platform: "linux",
       interactive: true,
     });
-    const { stdout, stderr } = await captureOutput(() => runLoginCommand({ oauth, keychain }));
+    const configStore = new ConfigStore({ configDir: dir });
+    const { stdout, stderr } = await captureOutput(() =>
+      runLoginCommand({ oauth, keychain, configStore }),
+    );
     assert.ok(stdout.includes(`Logged in as ${TEST_LOGIN}`));
     assert.ok(!stdout.includes(TEST_TOKEN), "token must not appear in stdout");
     assert.ok(!stderr.includes(TEST_TOKEN), "token must not appear in stderr");
@@ -960,7 +968,8 @@ describe("runLoginCommand", () => {
       platform: "darwin",
       interactive: false,
     });
-    await runLoginCommand({ oauth, keychain });
+    const configStore = new ConfigStore({ configDir: dir });
+    await runLoginCommand({ oauth, keychain, configStore });
     const credPath = path.join(dir, "clip", "credentials.json");
     const stats = await stat(credPath);
     assert.ok(stats.isFile());
@@ -978,9 +987,33 @@ describe("runLoginCommand", () => {
       platform: "linux",
       interactive: true,
     });
-    const { stdout, stderr } = await captureOutput(() => runLoginCommand({ oauth, keychain }));
+    const configStore = new ConfigStore({ configDir: dir });
+    const { stdout, stderr } = await captureOutput(() =>
+      runLoginCommand({ oauth, keychain, configStore }),
+    );
     assert.ok(!stdout.includes(TEST_TOKEN));
     assert.ok(!stderr.includes(TEST_TOKEN));
+  });
+
+  it("auto-sets github.owner from GET /user login (VAL-AUTH-023)", async () => {
+    const fetchFn = createMockFetch({
+      tokenResponses: [{ ok: true, status: 200, body: { access_token: TEST_TOKEN } }],
+    });
+    const oauth = new OAuthClient({ fetchFn, sleepFn: noopSleep });
+    const dir = await createTempDir();
+    const keychain = new KeychainStore({
+      configDir: dir,
+      platform: "linux",
+      interactive: true,
+    });
+    const configStore = new ConfigStore({ configDir: dir });
+    await runLoginCommand({ oauth, keychain, configStore });
+    const owner = await configStore.get("github.owner");
+    assert.equal(owner, TEST_LOGIN, "github.owner should be set to the authenticated login");
+    // Token must not be stored in the config file
+    const configPath = path.join(dir, "clip", "config.json");
+    const content = await readFile(configPath, "utf8");
+    assert.ok(!content.includes(TEST_TOKEN), "token must not be stored in config");
   });
 });
 

@@ -87,7 +87,7 @@ function createMockConfigStore(config: ClipConfig) {
 
 const DEFAULT_GITHUB_CONFIG: ClipConfig = {
   mode: "remote",
-  github: { owner: "iamrajjoshi", repo: "clip", branch: "main" },
+  github: { owner: "", repo: "", branch: "main" },
 };
 
 interface MockPublisherState {
@@ -752,7 +752,7 @@ describe("executePublishing", () => {
       const dir = await createTempDir();
       const customConfig: ClipConfig = {
         mode: "remote",
-        github: { owner: "iamrajjoshi", repo: "clip", branch: "develop" },
+        github: { owner: "testowner", repo: "testrepo", branch: "develop" },
       };
       const state: MockPublisherState = {
         factoryCalls: [],
@@ -776,8 +776,8 @@ describe("executePublishing", () => {
 
       assert.ok(state.factoryCalls[0]!.github, "github config should be passed");
       assert.equal(state.factoryCalls[0]!.github!.branch, "develop");
-      assert.equal(state.factoryCalls[0]!.github!.owner, "iamrajjoshi");
-      assert.equal(state.factoryCalls[0]!.github!.repo, "clip");
+      assert.equal(state.factoryCalls[0]!.github!.owner, "testowner");
+      assert.equal(state.factoryCalls[0]!.github!.repo, "testrepo");
     });
 
     it("passes default github config when config store returns defaults", async () => {
@@ -1068,6 +1068,74 @@ describe("executePublishing", () => {
         github: { owner: "owner", repo: "repo", branch: "main" },
       });
       assert.ok(publisher instanceof GitHubApiPublisher);
+    });
+  });
+
+  // -----------------------------------------------------------------------
+  // VAL-REMOTE-031: Remote mode with no repo configured
+  // -----------------------------------------------------------------------
+  describe("VAL-REMOTE-031: Remote mode with no repo configured", () => {
+    it("exits with a helpful error when github.repo is empty", async () => {
+      const dir = await createTempDir();
+      const emptyRepoConfig: ClipConfig = {
+        mode: "remote",
+        github: { owner: "testowner", repo: "", branch: "main" },
+      };
+      const deps: ClipCommandDeps = {
+        keychain: createMockKeychain("ghp_testtoken"),
+        configStore: createMockConfigStore(emptyRepoConfig),
+        // Use the real factory (no createPublisherFn override) so the
+        // empty-repo guard runs and throws before any publisher is created.
+      };
+
+      await assert.rejects(
+        () =>
+          executePublishing(
+            makePreparedClip(),
+            { dryRun: false, noPush: false, local: false },
+            dir,
+            deps,
+          ),
+        (err: unknown) => {
+          assert.ok(err instanceof Error);
+          assert.ok(err.message.includes("No repository configured"));
+          assert.ok(err.message.includes("clip init"));
+          assert.ok(err.message.includes("clip config set github.repo"));
+          return true;
+        },
+      );
+    });
+
+    it("makes no publish API calls when github.repo is empty", async () => {
+      const dir = await createTempDir();
+      const emptyRepoConfig: ClipConfig = {
+        mode: "remote",
+        github: { owner: "testowner", repo: "", branch: "main" },
+      };
+      const deps: ClipCommandDeps = {
+        keychain: createMockKeychain("ghp_testtoken"),
+        configStore: createMockConfigStore(emptyRepoConfig),
+        // Use the real factory (no createPublisherFn override). The empty-repo
+        // guard throws before a GitHubApiPublisher is constructed, so no
+        // GitHub API calls can be made.
+      };
+
+      await assert.rejects(
+        () =>
+          executePublishing(
+            makePreparedClip(),
+            { dryRun: false, noPush: false, local: false },
+            dir,
+            deps,
+          ),
+        (err: unknown) => {
+          assert.ok(err instanceof Error);
+          assert.ok(err.message.includes("No repository configured"));
+          return true;
+        },
+      );
+      // Reaching this point means executePublishing rejected before any
+      // publisher was created, so no publish API calls were made.
     });
   });
 });

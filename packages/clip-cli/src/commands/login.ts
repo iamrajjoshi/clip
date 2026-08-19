@@ -1,15 +1,18 @@
 import { OAuthClient } from "../auth/oauth";
 import { KeychainStore } from "../auth/keychain";
+import { ConfigStore } from "../config/store";
 
 export interface LoginCommandOptions {
   oauth?: OAuthClient;
   keychain?: KeychainStore;
+  configStore?: Pick<ConfigStore, "set" | "get">;
 }
 
 /** Run the login command: OAuth Device Flow → verify → store → print success. */
 export async function runLoginCommand(options?: LoginCommandOptions): Promise<void> {
   const keychain = options?.keychain ?? new KeychainStore();
   const oauth = options?.oauth ?? new OAuthClient();
+  const configStore = options?.configStore ?? new ConfigStore();
 
   // Check if already logged in
   const existingToken = await keychain.read();
@@ -31,6 +34,10 @@ export async function runLoginCommand(options?: LoginCommandOptions): Promise<vo
 
   // Store token (Keychain on macOS, file fallback otherwise)
   await keychain.store(accessToken);
+
+  // Auto-set github.owner from the authenticated user's login so remote
+  // publishing targets the correct account without manual configuration.
+  await configStore.set("github.owner", login);
 
   // Print success message (without token)
   console.log(`Logged in as ${login}`);

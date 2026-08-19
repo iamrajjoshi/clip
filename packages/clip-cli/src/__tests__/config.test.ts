@@ -39,12 +39,12 @@ describe("ConfigStore", () => {
       assert.equal(DEFAULT_CONFIG.mode, "remote");
     });
 
-    it("default config has github.owner: iamrajjoshi", () => {
-      assert.equal(DEFAULT_CONFIG.github.owner, "iamrajjoshi");
+    it("default config has github.owner: empty string (auto-set during login)", () => {
+      assert.equal(DEFAULT_CONFIG.github.owner, "");
     });
 
-    it("default config has github.repo: clip", () => {
-      assert.equal(DEFAULT_CONFIG.github.repo, "clip");
+    it("default config has github.repo: empty string (set via clip init or config set)", () => {
+      assert.equal(DEFAULT_CONFIG.github.repo, "");
     });
 
     it("default config has github.branch: main", () => {
@@ -94,8 +94,8 @@ describe("ConfigStore", () => {
       const store = new ConfigStore({ configDir: dir });
       const config = await store.read();
       assert.equal(config.mode, "local");
-      assert.equal(config.github.owner, "iamrajjoshi");
-      assert.equal(config.github.repo, "clip");
+      assert.equal(config.github.owner, "");
+      assert.equal(config.github.repo, "");
       assert.equal(config.github.branch, "main");
     });
 
@@ -120,8 +120,8 @@ describe("ConfigStore", () => {
     it("supports dot-notation for nested keys from defaults", async () => {
       const dir = await createTempDir();
       const store = new ConfigStore({ configDir: dir });
-      assert.equal(await store.get("github.owner"), "iamrajjoshi");
-      assert.equal(await store.get("github.repo"), "clip");
+      assert.equal(await store.get("github.owner"), "");
+      assert.equal(await store.get("github.repo"), "");
       assert.equal(await store.get("github.branch"), "main");
       assert.equal(await store.get("mode"), "remote");
     });
@@ -166,8 +166,8 @@ describe("ConfigStore", () => {
       await store.set("github.branch", "develop");
       const config = await store.read();
       assert.equal(config.github.branch, "develop");
-      assert.equal(config.github.owner, "iamrajjoshi");
-      assert.equal(config.github.repo, "clip");
+      assert.equal(config.github.owner, "");
+      assert.equal(config.github.repo, "");
       assert.equal(config.mode, "remote");
     });
 
@@ -364,8 +364,8 @@ describe("ConfigStore", () => {
       const printable = await store.toPrintable();
       assert.equal(printable.mode, "remote");
       const github = printable.github as Record<string, unknown>;
-      assert.equal(github.owner, "iamrajjoshi");
-      assert.equal(github.repo, "clip");
+      assert.equal(github.owner, "");
+      assert.equal(github.repo, "");
       assert.equal(github.branch, "main");
     });
 
@@ -459,8 +459,8 @@ describe("runConfigCommand", () => {
       const { stdout } = await captureOutput(() => runConfigCommand([]));
       const parsed = JSON.parse(stdout);
       assert.equal(parsed.mode, "remote");
-      assert.equal(parsed.github.owner, "iamrajjoshi");
-      assert.equal(parsed.github.repo, "clip");
+      assert.equal(parsed.github.owner, "");
+      assert.equal(parsed.github.repo, "");
       assert.equal(parsed.github.branch, "main");
     } finally {
       if (oldXdg === undefined) {
@@ -477,7 +477,7 @@ describe("runConfigCommand", () => {
     process.env.XDG_CONFIG_HOME = dir;
     try {
       const { stdout } = await captureOutput(() => runConfigCommand(["get", "github.owner"]));
-      assert.equal(stdout, "iamrajjoshi");
+      assert.equal(stdout, "");
     } finally {
       if (oldXdg === undefined) {
         delete process.env.XDG_CONFIG_HOME;
