@@ -35,7 +35,12 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Publish
+      - name: Publish @clip/schema
+        run: pnpm --filter @clip/schema publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @clip/cli
         run: pnpm --filter @clip/cli publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
