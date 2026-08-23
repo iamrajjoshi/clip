@@ -12,9 +12,7 @@
     "knip": "knip --include dependencies,devDependencies,unlisted,binaries",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
-    "check": "pnpm --filter @clip/web check && pnpm --filter @clip/cli typecheck",
-    "clip": "pnpm --filter @clip/cli clip",
-    "install:cli": "pnpm link --global ./packages/clip-cli"
+    "check": "pnpm --filter @clip/web check"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -30,7 +28,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@clip/schema": "workspace:*"
+      "@clip/schema": "file:../clip-cli/packages/clip-schema"
     }
   }
 }
