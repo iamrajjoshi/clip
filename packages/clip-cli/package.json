@@ -24,13 +24,13 @@
     "test": "tsx --test src/__tests__/*.test.ts"
   },
   "dependencies": {
+    "@clip/schema": "^0.1.0",
     "@inquirer/prompts": "^8.4.2",
     "node-html-parser": "^7.1.0",
     "sharp": "^0.34.5",
     "yaml": "^2.8.3"
   },
   "devDependencies": {
-    "@clip/schema": "workspace:*",
     "tsup": "^8.5.1",
     "tsx": "^4.21.0"
   }
