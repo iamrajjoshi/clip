@@ -2,12 +2,16 @@
 
 ```mermaid
 flowchart LR
-  CLI["packages/clip-cli"] -->|writes markdown and assets| Content["apps/web/src/content and public/clips"]
-  Content --> Astro["Astro static build"]
+  Content["apps/web/src/content and public/clips"] --> Astro["Astro static build"]
   Astro --> Pages["GitHub Pages"]
 ```
 
-The CLI is local-first. It detects and scrapes an input, validates clip metadata,
-then writes content and assets into the web application's repository-backed content
-collection. Astro builds that content into a static site. There is no database,
-backend, or runtime service.
+This repository is the clippings site. Markdown clips and assets live in
+`apps/web/src/content/clips/` and `apps/web/public/clips/`; Astro builds that
+content into a static site that GitHub Actions deploys to Pages. There is no
+database, backend, or runtime service.
+
+The `clip` CLI that authoring clips is a separate project published as the
+`@clip/cli` npm package ([iamrajjoshi/clip-cli](https://github.com/iamrajjoshi/clip-cli)).
+It writes clips into this repository's content collection, either locally or
+remotely through the GitHub REST API.
