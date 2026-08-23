@@ -7,12 +7,6 @@
     },
     "apps/web": {
       "project": ["src/**/*.{astro,css,ts,tsx,js,mjs}"]
-    },
-    "packages/clip-cli": {
-      "project": ["src/**/*"]
-    },
-    "packages/clip-schema": {
-      "project": ["src/**/*"]
     }
   }
 }

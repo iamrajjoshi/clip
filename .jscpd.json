@@ -1,5 +1,5 @@
 {
-  "path": ["apps/web/src", "packages/clip-cli/src"],
+  "path": ["apps/web/src"],
   "ignore": ["**/*.test.ts", "**/node_modules/**"],
   "minLines": 8,
   "minTokens": 50,
