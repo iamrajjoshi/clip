@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@clip/schema': file:../clip-cli/packages/clip-schema
+  '@iamrajjoshi/schema': file:../clip-cli/packages/clip-schema
 
 importers:
 
@@ -50,7 +50,7 @@ importers:
       '@astrojs/rss':
         specifier: ^4.0.18
         version: 4.0.18
-      '@clip/schema':
+      '@iamrajjoshi/schema':
         specifier: file:../../../clip-cli/packages/clip-schema
         version: file:../clip-cli/packages/clip-schema
       '@sentry/astro':
@@ -231,9 +231,6 @@ packages:
   '@capsizecss/unpack@4.0.0':
     resolution: {integrity: sha512-VERIM64vtTP1C4mxQ5thVT9fK0apjPFobqybMtA1UdUujWka24ERHbRHFGmpbbhp73MhV+KSsHQH9C6uOTdEQA==}
     engines: {node: '>=18'}
-
-  '@clip/schema@file:../clip-cli/packages/clip-schema':
-    resolution: {directory: ../clip-cli/packages/clip-schema, type: directory}
 
   '@emmetio/abbreviation@2.3.3':
     resolution: {integrity: sha512-mgv58UrU3rh4YgbE/TzgLQwJ3pFsHHhCLqY20aJq+9comytTXUDNGG/SMtSeMJdkpxgXSXunBGLD8Boka3JyVA==}
@@ -644,6 +641,9 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
+
+  '@iamrajjoshi/schema@file:../clip-cli/packages/clip-schema':
+    resolution: {directory: ../clip-cli/packages/clip-schema, type: directory}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -3974,10 +3974,6 @@ snapshots:
     dependencies:
       fontkitten: 1.0.3
 
-  '@clip/schema@file:../clip-cli/packages/clip-schema':
-    dependencies:
-      zod: 3.25.76
-
   '@emmetio/abbreviation@2.3.3':
     dependencies:
       '@emmetio/scanner': 1.0.4
@@ -4238,6 +4234,10 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
+
+  '@iamrajjoshi/schema@file:../clip-cli/packages/clip-schema':
+    dependencies:
+      zod: 3.25.76
 
   '@img/colour@1.1.0':
     optional: true

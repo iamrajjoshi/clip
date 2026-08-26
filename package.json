@@ -28,7 +28,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@clip/schema": "file:../clip-cli/packages/clip-schema"
+      "@iamrajjoshi/schema": "file:../clip-cli/packages/clip-schema"
     }
   }
 }
