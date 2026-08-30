@@ -47,9 +47,6 @@ importers:
       '@astrojs/rss':
         specifier: ^4.0.18
         version: 4.0.18
-      '@iamrajjoshi/clip-schema':
-        specifier: ^0.1.0
-        version: 0.1.0
       '@sentry/astro':
         specifier: ^10.70.0
         version: 10.70.0(@opentelemetry/core@2.10.0(@opentelemetry/api@1.9.1))(astro@5.18.1(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.0))(rollup@4.60.2)
@@ -65,6 +62,9 @@ importers:
       astro:
         specifier: ^5.18.1
         version: 5.18.1(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.2)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.0)
+      cliplink-schema:
+        specifier: ^0.1.0
+        version: 0.1.0
       react:
         specifier: ^19.2.5
         version: 19.2.5
@@ -638,9 +638,6 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
-
-  '@iamrajjoshi/clip-schema@0.1.0':
-    resolution: {integrity: sha512-6osJjfHLCRtQf5iR5BdWwFDdClDNWg0WGMul+o0DsVB9fVJTs4Jx7B8rzKs1+xVw/Wnb11VCixbfk+k47s4C7g==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2065,6 +2062,9 @@ packages:
   cli-boxes@3.0.0:
     resolution: {integrity: sha512-/lzGpEWL/8PfI0BmBOPRwp0c/wFNX1RdUML3jK/RcSBA9T8mZDdQpqYBKtCFTOfQbwPqWEOpjqW+Fnayc0969g==}
     engines: {node: '>=10'}
+
+  cliplink-schema@0.1.0:
+    resolution: {integrity: sha512-VjQ8TLaE7RNn6IIu1gSI++3UD2vDzsxLCSknb1FoI+gpYm9y/wtRif0JuEJP/enya4yhix3FJ/kk+bplPql5wQ==}
 
   cliui@8.0.1:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
@@ -4232,10 +4232,6 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iamrajjoshi/clip-schema@0.1.0':
-    dependencies:
-      zod: 3.25.76
-
   '@img/colour@1.1.0':
     optional: true
 
@@ -5490,6 +5486,10 @@ snapshots:
   cjs-module-lexer@2.2.1: {}
 
   cli-boxes@3.0.0: {}
+
+  cliplink-schema@0.1.0:
+    dependencies:
+      zod: 3.25.76
 
   cliui@8.0.1:
     dependencies:
