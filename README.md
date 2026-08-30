@@ -77,12 +77,12 @@ See [`docs/architecture.md`](docs/architecture.md) and [`runbooks/README.md`](ru
 
 ## The `clip` CLI
 
-The CLI that authoring clips is a separate project, published as the `clipit` npm package and developed in [iamrajjoshi/clipit](https://github.com/iamrajjoshi/clipit).
+The CLI that authoring clips is a separate project, published as the `cliplink` npm package and developed in [iamrajjoshi/cliplink](https://github.com/iamrajjoshi/cliplink).
 
 Install it globally to publish clips into this repository:
 
 ```bash
-npm install -g clipit
+npm install -g cliplink
 ```
 
-For CLI documentation — authentication, configuration, `clip init`, remote and local publishing modes, and the full command and flag reference — see the [clipit repository](https://github.com/iamrajjoshi/clipit).
+For CLI documentation — authentication, configuration, `clip init`, remote and local publishing modes, and the full command and flag reference — see the [cliplink repository](https://github.com/iamrajjoshi/cliplink).

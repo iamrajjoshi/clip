@@ -14,7 +14,7 @@
   "dependencies": {
     "@astrojs/react": "^4.4.2",
     "@astrojs/rss": "^4.0.18",
-    "clipit-schema": "^0.1.0",
+    "cliplink-schema": "^0.1.0",
     "@sentry/astro": "^10.70.0",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
