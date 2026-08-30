@@ -12,6 +12,6 @@ content into a static site that GitHub Actions deploys to Pages. There is no
 database, backend, or runtime service.
 
 The `clip` CLI that authoring clips is a separate project published as the
-`@iamrajjoshi/cli` npm package ([iamrajjoshi/clip-cli](https://github.com/iamrajjoshi/clip-cli)).
+`clipit` npm package ([iamrajjoshi/clipit](https://github.com/iamrajjoshi/clipit)).
 It writes clips into this repository's content collection, either locally or
 remotely through the GitHub REST API.

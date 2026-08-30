@@ -12,4 +12,4 @@ export {
   videoClipDataSchema,
   type ClipFrontmatter,
   type ClipKind,
-} from "@iamrajjoshi/schema";
+} from "clipit-schema";
