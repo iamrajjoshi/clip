@@ -1,6 +1,6 @@
 # Project
 
-`clip.rajjoshi.me` is a static clippings site backed by markdown content. The `clip` CLI is developed in a separate repository ([iamrajjoshi/cliplink](https://github.com/iamrajjoshi/cliplink)) and published as the `cliplink` npm package; this repository is site-only.
+`clips.rajjoshi.me` is a static clippings site backed by markdown content. The `clip` CLI is developed in a separate repository ([iamrajjoshi/cliplink](https://github.com/iamrajjoshi/cliplink)) and published as the `cliplink` npm package; this repository is site-only.
 
 ## Stack
 

@@ -1,4 +1,4 @@
-# clip.rajjoshi.me
+# clips.rajjoshi.me
 
 A static clippings site that collects links, tweets, images, videos, and notes as repo-backed markdown. Built with Astro and deployed to GitHub Pages.
 
@@ -16,7 +16,7 @@ A static clippings site that collects links, tweets, images, videos, and notes a
 
 ## What this is
 
-`clip.rajjoshi.me` is a static clippings site. Each clip is a single markdown file in the repo, rendered by Astro into a feed of cards and individual permalink pages. There is no database, backend, or runtime service — the repo's content collection is the source of truth and Astro generates a static site from it.
+`clips.rajjoshi.me` is a static clippings site. Each clip is a single markdown file in the repo, rendered by Astro into a feed of cards and individual permalink pages. There is no database, backend, or runtime service — the repo's content collection is the source of truth and Astro generates a static site from it.
 
 ## Tech Stack
 
@@ -69,8 +69,9 @@ Clip kinds: `link`, `tweet`, `image`, `video`, `note`. One markdown file per cli
 The site is deployed with GitHub Actions to GitHub Pages.
 
 - GitHub Actions builds `apps/web` and deploys `apps/web/dist` to Pages
-- `apps/web/public/CNAME` must contain `clip.rajjoshi.me`
-- DNS should point `clip.rajjoshi.me` at `iamrajjoshi.github.io`
+- Set the custom domain to `clips.rajjoshi.me` in the repository's **Settings → Pages** or through the Pages API
+- Keep `apps/web/public/CNAME` set to `clips.rajjoshi.me`; GitHub ignores this file for Actions deployments, so it doesn't configure the Pages custom domain
+- DNS should point `clips.rajjoshi.me` at `iamrajjoshi.github.io`
 
 See [`docs/architecture.md`](docs/architecture.md) and [`runbooks/README.md`](runbooks/README.md) for system flow and deployment recovery.
 

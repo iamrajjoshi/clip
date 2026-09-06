@@ -46,7 +46,7 @@ function getCommitSha() {
 }
 
 export default defineConfig({
-  site: "https://clip.rajjoshi.me",
+  site: "https://clips.rajjoshi.me",
   output: "static",
   integrations: [
     sentry({

@@ -95,7 +95,7 @@ export function buildOgSvg(clip?: ClipEntry) {
     textLines(descriptionLines, descriptionTop, 27, 37, "#53627C", 400) +
     '<line x1="80" y1="518" x2="1120" y2="518" stroke="#C5CEE0"/>' +
     '<text x="80" y="566" fill="#53627C" font-size="20">' +
-    escapeXml(clip ? getClipSourceLabel(clip) : "clip.rajjoshi.me") +
+    escapeXml(clip ? getClipSourceLabel(clip) : "clips.rajjoshi.me") +
     "</text>" +
     '<text x="1120" y="566" text-anchor="end" fill="#53627C" font-size="20">' +
     escapeXml(clip ? formatDate(clip.data.clippedAt) : "") +
