@@ -22,21 +22,30 @@ function getSearchText(clip: ClipEntry): string {
 
 <section data-clip-feed aria-label="Saved clips">
   <span class="sr-only" data-feed-status role="status" aria-live="polite"></span>
-  <header class="feed-tools">
+  <form class="feed-tools feed-search" id="clip-search" role="search">
+    {clips.length > 0 && (
+      <>
+        <div class="search-field">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6" /><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+          <label class="sr-only" for="clip-query">Search clips</label>
+          <input type="search" id="clip-query" name="q" placeholder="Find a clip…" autocomplete="off" disabled />
+          <button class="search-clear" type="reset" aria-label="Clear search and filters" hidden><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+        </div>
+        {tags.length > 0 && (
+          <label class="tag-field">
+            <span class="sr-only">Filter by tag</span>
+            <select id="clip-tag" name="tag" disabled><option value="">All tags</option>{tags.map(({ tag }) => <option value={tag}>{tag}</option>)}</select>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </label>
+        )}
+      </>
+    )}
     <div class="feed-actions">
-      {clips.length > 0 && <button class="quiet-button search-toggle" type="button" data-search-toggle aria-expanded="false" aria-controls="clip-search">Search</button>}
       <a class="quiet-link" href="/rss.xml">RSS</a>
       <ThemeToggle />
     </div>
-  </header>
-  {clips.length > 0 && (
-    <form class="feed-search" id="clip-search" role="search" hidden>
-      <label class="sr-only" for="clip-query">Search clips</label>
-      <input type="search" id="clip-query" name="q" placeholder="Search titles, text, or tags" autocomplete="off" />
-      {tags.length > 0 && <><label class="sr-only" for="clip-tag">Filter by tag</label><select id="clip-tag" name="tag"><option value="">All tags</option>{tags.map(({ tag }) => <option value={tag}>{tag}</option>)}</select></>}
-      <button class="quiet-button" type="reset">Clear</button>
-    </form>
-  )}
+  </form>
+  <noscript><p class="search-notice">Enable JavaScript to search and filter. All clips are shown below.</p></noscript>
   <div class="clip-feed">
     {clips.map((clip) => (
       <div data-clip-entry data-search={getSearchText(clip)} data-tags={JSON.stringify(clip.data.tags)}>
@@ -52,7 +61,7 @@ function getSearchText(clip: ClipEntry): string {
   const form = feed?.querySelector<HTMLFormElement>(".feed-search");
   const query = form?.querySelector<HTMLInputElement>("[name=q]");
   const tag = form?.querySelector<HTMLSelectElement>("[name=tag]");
-  const toggle = feed?.querySelector<HTMLButtonElement>("[data-search-toggle]");
+  const clear = form?.querySelector<HTMLButtonElement>("[type=reset]");
   const status = feed?.querySelector<HTMLElement>("[data-feed-status]");
   const empty = feed?.querySelector<HTMLElement>("[data-empty-state]");
   const entries = [...(feed?.querySelectorAll<HTMLElement>("[data-clip-entry]") ?? [])].map((element) => ({
@@ -62,7 +71,8 @@ function getSearchText(clip: ClipEntry): string {
   }));
 
   function filterClips(): void {
-    const terms = (query?.value.trim().toLocaleLowerCase() ?? "").split(/\s+/).filter(Boolean);
+    const queryText = query?.value ?? "";
+    const terms = queryText.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
     const selectedTag = tag?.value ?? "";
     let count = 0;
     for (const { element, search, tags } of entries) {
@@ -72,18 +82,19 @@ function getSearchText(clip: ClipEntry): string {
     }
     if (status) status.textContent = count + " " + (count === 1 ? "clip" : "clips") + (terms.length || selectedTag ? " of " + entries.length : "");
     if (empty) empty.hidden = count > 0;
+    if (clear) clear.hidden = !queryText && !selectedTag;
   }
 
-  toggle?.addEventListener("click", () => {
-    if (!form) return;
-    form.hidden = !form.hidden;
-    toggle.setAttribute("aria-expanded", String(!form.hidden));
-    if (!form.hidden) query?.focus();
-  });
+  if (query) query.disabled = false;
+  if (tag) tag.disabled = false;
   form?.addEventListener("submit", (event) => event.preventDefault());
-  form?.addEventListener("input", filterClips);
+  query?.addEventListener("input", filterClips);
+  tag?.addEventListener("change", filterClips);
   form?.addEventListener("reset", () => {
     requestAnimationFrame(filterClips);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("tag");
+    window.history.replaceState(window.history.state, "", url);
     query?.focus();
   });
   window.addEventListener("pageshow", () => requestAnimationFrame(filterClips));
@@ -91,8 +102,6 @@ function getSearchText(clip: ClipEntry): string {
   const selectedTag = new URLSearchParams(window.location.search).get("tag");
   if (selectedTag && tag && [...tag.options].some((option) => option.value === selectedTag)) {
     tag.value = selectedTag;
-    if (form) form.hidden = false;
-    toggle?.setAttribute("aria-expanded", "true");
-    filterClips();
   }
+  filterClips();
 </script>
