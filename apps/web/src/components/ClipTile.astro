@@ -1,0 +1,36 @@
+---
+import { formatDate, getClipPermalink, type ClipEntry } from "@/lib/clips";
+import { linkifyText } from "@/lib/text";
+import { getClipTileContent, isUrlOnlyText } from "@/lib/tile";
+
+const { entry } = Astro.props as { entry: ClipEntry };
+const { title, excerpt, source, image } = getClipTileContent(entry);
+const permalink = getClipPermalink(entry);
+const isLinkPost = entry.data.kind === "tweet" && isUrlOnlyText(entry.data.text);
+const isQuote = (entry.data.kind === "tweet" && !isLinkPost) || entry.data.kind === "note";
+const excerptLeads = isQuote || isLinkPost;
+const Excerpt = entry.data.kind === "tweet" && isQuote ? "blockquote" : "p";
+const quoteSource = entry.data.kind === "tweet" && isQuote ? entry.data.url : undefined;
+const postLinks = entry.data.kind === "tweet" && isLinkPost ? linkifyText(entry.data.text) : [];
+// The excerpt is already entity-decoded; preserve that display text during linkification.
+const quoteParts = entry.data.kind === "tweet"
+  ? linkifyText(excerpt.replaceAll("&", "&amp;"))
+  : [{ text: excerpt, href: undefined }];
+---
+
+<article class:list={["clip-tile", "clip-tile--" + entry.data.kind, { "clip-tile--quote": isQuote, "clip-tile--link-post": isLinkPost }]} aria-label={title}>
+  {isLinkPost && <p class="tile-excerpt">{postLinks.map((part) => part.href ? <a href={part.href} rel="noreferrer">{part.text}</a> : part.text)}</p>}
+  {isQuote && excerpt && <Excerpt class="tile-excerpt" cite={quoteSource}>{quoteParts.map((part) => part.href && !part.text.endsWith("…") ? <a class="tile-quoted-link" href={part.href} rel="noreferrer">{part.text}</a> : part.text)}</Excerpt>}
+  {image && <a class="tile-media" href={permalink} tabindex="-1" aria-hidden="true"><img class="tile-image" src={image} alt="" loading="lazy" /></a>}
+  <h2 class="tile-title"><a href={permalink}>{title}</a></h2>
+  {entry.data.kind !== "note" && <div class="tile-source">
+    {source.icon && <img class="tile-source-icon" src={source.icon} alt="" width="20" height="20" loading="lazy" />}
+    {source.url ? <a href={source.url} rel="noreferrer">{source.label}</a> : <span>{source.label}</span>}
+  </div>}
+  {!excerptLeads && excerpt && <p class="tile-excerpt">{excerpt}</p>}
+  {entry.data.tags.length > 0 && <ul class="tile-tags" aria-label="Tags">{entry.data.tags.map((tag) => <li><a href={"/?tag=" + encodeURIComponent(tag)}>{tag}</a></li>)}</ul>}
+  <footer class="tile-footer">
+    <time datetime={entry.data.clippedAt.toISOString()}>Saved {formatDate(entry.data.clippedAt)}</time>
+    <a href={permalink} aria-label={"Open clip: " + title}>Open clip</a>
+  </footer>
+</article>

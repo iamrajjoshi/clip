@@ -1,62 +1,27 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { ClipEntry } from "@/lib/clips";
 import CardShell from "@/components/cards/CardShell.astro";
 import EntryBody from "@/components/EntryBody.astro";
 import { getClipDescription, getClipSourceLabel, getClipTitle } from "@/lib/clips";
 
-const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
-
-if (entry.data.kind !== "link") {
-  throw new Error("LinkCard received a non-link entry.");
-}
-
+const { entry, standalone = false } = Astro.props as { entry: ClipEntry; standalone?: boolean };
+if (entry.data.kind !== "link") throw new Error("LinkCard received a non-link entry.");
 const title = getClipTitle(entry);
 const description = getClipDescription(entry);
-const sourceLabel = getClipSourceLabel(entry);
+const Heading = standalone ? "h1" : "h2";
 ---
 
-<CardShell entry={entry}>
-  <div class="grid gap-5 sm:grid-cols-[1fr_120px] sm:items-start">
-    <div class="min-w-0 flex-1">
-      <div class="flex items-center gap-3 text-[13px] tracking-[0.02em] text-[var(--text-muted)]">
-        {entry.data.favicon && (
-          <img
-            src={entry.data.favicon}
-            alt=""
-            class="h-5 w-5 rounded-[4px] border border-[var(--border)] object-cover"
-            loading="lazy"
-          />
-        )}
-        <span>{sourceLabel}</span>
+<CardShell entry={entry} standalone={standalone}>
+  <div class="link-preview">
+    <div class="link-copy">
+      <div class="clip-source">
+        {entry.data.favicon && <img class="source-icon" src={entry.data.favicon} alt="" width="16" height="16" loading="lazy" />}
+        <span>{getClipSourceLabel(entry)}</span>
       </div>
-      <h2 class="mt-4 max-w-[34rem] text-[clamp(1.9rem,7vw,2.75rem)] leading-[1.05] font-semibold tracking-[-0.045em]">
-        <a
-          href={entry.data.url}
-          target="_blank"
-          rel="noreferrer"
-          class="card-link-title break-words decoration-[1.5px] underline-offset-[0.18em] transition-colors hover:text-[var(--text-muted)] focus-visible:text-[var(--text-muted)] focus-visible:outline-none"
-        >
-          {title}
-        </a>
-      </h2>
-      {description && (
-        <p class="mt-4 max-w-[38rem] text-[15px] leading-[1.7] text-[var(--text-muted)]">
-          {description}
-        </p>
-      )}
+      <Heading class="clip-title"><a href={entry.data.url} rel="noreferrer">{title}</a></Heading>
+      {description && description !== title && <p class="clip-description">{description}</p>}
     </div>
-    {entry.data.ogImage && (
-      <img
-        src={entry.data.ogImage}
-        alt=""
-        class="hidden h-[96px] w-[120px] overflow-hidden rounded-[6px] border border-[var(--border)] object-cover sm:block"
-        loading="lazy"
-      />
-    )}
+    {entry.data.ogImage && <a class="link-thumbnail" href={entry.data.url} tabindex="-1" aria-hidden="true"><img src={entry.data.ogImage} alt="" width="112" height="84" loading="lazy" /></a>}
   </div>
-  {entry.body?.trim() && (
-    <div slot="commentary" class="mt-4 border-t border-[var(--border)] pt-4">
-      <EntryBody entry={entry} />
-    </div>
-  )}
+  {entry.body?.trim() && <div slot="commentary" class="clip-commentary"><EntryBody entry={entry} /></div>}
 </CardShell>

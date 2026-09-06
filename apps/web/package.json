@@ -12,17 +12,10 @@
     "test": "tsx --test src/test/clips.test.ts"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.2",
     "@astrojs/rss": "^4.0.18",
     "cliplink-schema": "^0.1.0",
     "@sentry/astro": "^10.70.0",
-    "@tailwindcss/vite": "^4.2.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "astro": "^5.18.1",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "tailwindcss": "^4.2.2"
+    "astro": "^5.18.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8"

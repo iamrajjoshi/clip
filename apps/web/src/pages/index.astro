@@ -7,6 +7,6 @@ import { getClipEntries } from "@/lib/content";
 const clips = sortClips(await getClipEntries());
 ---
 
-<Base title="clip" description="things i found interesting, stored." pathname="/">
+<Base>
   <ClipFeed clips={clips} />
 </Base>

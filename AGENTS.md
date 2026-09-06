@@ -5,7 +5,7 @@
 ## Stack
 
 - pnpm workspaces
-- `apps/web`: Astro 5, Tailwind v4, React islands, static output
+- `apps/web`: Astro 5, native CSS and JavaScript, static output
 
 ## Layout
 
@@ -26,7 +26,7 @@
 - Clip kinds: `link`, `tweet`, `image`, `video`, `note`
 - One markdown file per clip in `apps/web/src/content/clips/`
 - Assets live in `apps/web/public/clips/<slug>/`
-- Copy stays lowercase-first and cards remain native to the site
+- Copy uses regular sentence case and cards remain native to the site
 - TypeScript variables and functions use camelCase; types and components use PascalCase.
 - Test files use the `*.test.ts` suffix and should avoid shared mutable state.
 

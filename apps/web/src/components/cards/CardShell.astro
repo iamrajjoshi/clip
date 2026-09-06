@@ -1,20 +1,19 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { formatDate, getClipPermalink } from "@/lib/clips";
+import type { ClipEntry } from "@/lib/clips";
+import { formatDate, getClipPermalink, getClipTitle } from "@/lib/clips";
 
-const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
-const permalink = getClipPermalink(entry);
+const { entry, standalone = false } = Astro.props as { entry: ClipEntry; standalone?: boolean };
+const kinds = { link: "Link", tweet: "Post", image: "Image", video: "Video", note: "Note" };
 ---
 
-<article class="card-surface">
-  <div class="flex items-center justify-between gap-4 text-[12px] text-[var(--text-muted)]">
-    <span>{entry.data.kind}</span>
-    <a href={permalink}>
-      {formatDate(entry.data.clippedAt)}
+<article class:list={["clip-card", { "clip-card--standalone": standalone }]} aria-label={getClipTitle(entry)}>
+  <div class="clip-meta">
+    <a href={getClipPermalink(entry)} aria-label={"Saved " + formatDate(entry.data.clippedAt) + " — open clip"}>
+      <time datetime={entry.data.clippedAt.toISOString()}>{formatDate(entry.data.clippedAt)}</time>
     </a>
+    <span>{kinds[entry.data.kind]}</span>
   </div>
-  <div class="mt-4">
-    <slot />
-  </div>
+  <div class="clip-content"><slot /></div>
   <slot name="commentary" />
+  {entry.data.tags.length > 0 && <ul class="clip-tags" aria-label="Tags">{entry.data.tags.map((tag) => <li><a href={"/?tag=" + encodeURIComponent(tag)}>{tag}</a></li>)}</ul>}
 </article>

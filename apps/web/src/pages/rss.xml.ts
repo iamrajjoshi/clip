@@ -7,8 +7,8 @@ export async function GET(context: APIContext) {
   const clips = sortClips(await getClipEntries());
 
   return rss({
-    title: "clip",
-    description: "things i found interesting, stored.",
+    title: "Raj’s clips",
+    description: "Links, notes, and things I want to come back to.",
     site: context.site!,
     items: clips.map((clip) => ({
       title: getClipTitle(clip),

@@ -20,9 +20,8 @@ A static clippings site that collects links, tweets, images, videos, and notes a
 
 ## Tech Stack
 
-- [Astro 5](https://astro.build) — static site generator, content collections, React islands
-- [Tailwind CSS v4](https://tailwindcss.com) — styling
-- [React](https://react.dev) — interactive islands (card rendering, embeds)
+- [Astro 5](https://astro.build) — static pages and content collections
+- Native CSS and JavaScript — theme selection and feed search
 - [pnpm](https://pnpm.io) workspaces — package management
 - Static output, deployed to [GitHub Pages](https://pages.github.com)
 
@@ -77,7 +76,7 @@ See [`docs/architecture.md`](docs/architecture.md) and [`runbooks/README.md`](ru
 
 ## The `clip` CLI
 
-The CLI that authoring clips is a separate project, published as the `cliplink` npm package and developed in [iamrajjoshi/cliplink](https://github.com/iamrajjoshi/cliplink).
+The CLI that authors clips is a separate project, published as the `cliplink` npm package and developed in [iamrajjoshi/cliplink](https://github.com/iamrajjoshi/cliplink).
 
 Install it globally to publish clips into this repository:
 

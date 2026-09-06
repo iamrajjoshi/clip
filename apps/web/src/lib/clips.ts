@@ -138,11 +138,11 @@ export function getClipTitle(clip: ClipEntry) {
     case "tweet":
       return `@${clip.data.author.handle}`;
     case "image":
-      return clip.data.alt ?? "image clip";
+      return clip.data.alt || "Saved image";
     case "video":
       return clip.data.title;
     case "note":
-      return excerpt(clip.body || "note", 64) || "note";
+      return excerpt(clip.body || "Saved note", 64) || "Saved note";
   }
 }
 
@@ -153,13 +153,13 @@ export function getClipDescription(clip: ClipEntry) {
     case "tweet":
       return excerpt(clip.data.text, 160);
     case "image":
-      return clip.data.alt ?? excerpt(clip.body ?? "image clip", 160);
+      return clip.data.alt || excerpt(clip.body || "A saved image.", 160);
     case "video":
       return clip.data.channel
         ? `${clip.data.channel} on ${clip.data.provider}`
-        : `saved from ${clip.data.provider}`;
+        : `Saved from ${clip.data.provider}`;
     case "note":
-      return excerpt(clip.body, 160) || "a clipped note";
+      return excerpt(clip.body, 160) || "A saved note.";
   }
 }
 
@@ -168,7 +168,7 @@ export function getClipSourceLabel(clip: ClipEntry) {
     case "link":
       return getLinkSourceLabel(clip.data);
     case "tweet":
-      return "x";
+      return "X";
     case "image":
       return "image";
     case "video":

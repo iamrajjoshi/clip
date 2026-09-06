@@ -1,42 +1,21 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { ClipEntry } from "@/lib/clips";
 import CardShell from "@/components/cards/CardShell.astro";
 import EntryBody from "@/components/EntryBody.astro";
 
-const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
-
-if (entry.data.kind !== "video") {
-  throw new Error("VideoCard received a non-video entry.");
-}
+const { entry, standalone = false } = Astro.props as { entry: ClipEntry; standalone?: boolean };
+if (entry.data.kind !== "video") throw new Error("VideoCard received a non-video entry.");
+const Heading = standalone ? "h1" : "h2";
 ---
 
-<CardShell entry={entry}>
-  <div class="grid gap-4 sm:grid-cols-[1fr_160px] sm:items-start">
-    <div>
-      <p class="section-kicker">{entry.data.provider}</p>
-      <h2 class="mt-3 text-[28px] leading-[1.2] font-semibold">
-        <a href={entry.data.url} target="_blank" rel="noreferrer">
-          {entry.data.title}
-        </a>
-      </h2>
-      <p class="mt-3 text-sm text-[var(--text-muted)]">
-        {entry.data.channel ? `${entry.data.channel} on ${entry.data.provider}` : `saved from ${entry.data.provider}`}
-      </p>
-      <div class="mt-4">
-        <a href={entry.data.url} target="_blank" rel="noreferrer" class="tag-chip">
-          [watch]
-        </a>
-      </div>
+<CardShell entry={entry} standalone={standalone}>
+  <div class="link-preview">
+    <div class="link-copy">
+      <p class="clip-source">{entry.data.channel || entry.data.provider}</p>
+      <Heading class="clip-title"><a href={entry.data.url} rel="noreferrer">{entry.data.title}</a></Heading>
+      <a class="quiet-link video-source" href={entry.data.url} rel="noreferrer">Watch on {entry.data.provider}</a>
     </div>
-    {entry.data.thumbnail && (
-      <div class="overflow-hidden border border-[var(--border)]">
-        <img src={entry.data.thumbnail} alt="" class="h-full w-full object-cover" loading="lazy" />
-      </div>
-    )}
+    {entry.data.thumbnail && <a class="link-thumbnail" href={entry.data.url} tabindex="-1" aria-hidden="true"><img src={entry.data.thumbnail} alt="" width="112" height="84" loading="lazy" /></a>}
   </div>
-  {entry.body?.trim() && (
-    <div slot="commentary" class="mt-4 border-t border-[var(--border)] pt-4">
-      <EntryBody entry={entry} />
-    </div>
-  )}
+  {entry.body?.trim() && <div slot="commentary" class="clip-commentary"><EntryBody entry={entry} /></div>}
 </CardShell>

@@ -1,73 +1,84 @@
 ---
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import "@/styles/site-foundation.css";
 import "@/styles/global.css";
 
-const siteTitle = "clip";
-
-const {
-  title = siteTitle,
-  description = "things i found interesting, stored.",
-  headerDescription = description,
-  image,
-  pathname = "/",
-} = Astro.props as {
+interface Props {
   title?: string;
   description?: string;
-  headerDescription?: string | null;
   image?: string;
   pathname?: string;
-};
+  noindex?: boolean;
+}
 
+const {
+  title = "Raj’s clips",
+  description = "Links, notes, and things I want to come back to.",
+  image = "/og/site.svg",
+  pathname = Astro.url.pathname,
+  noindex = false,
+} = Astro.props;
 const canonical = new URL(pathname, Astro.site);
-const socialImage = image ? new URL(image, Astro.site).toString() : undefined;
-const rssFeed = new URL("/rss.xml", Astro.site).toString();
+const socialImage = new URL(image, Astro.site).toString();
 const commitSha = import.meta.env.PUBLIC_COMMIT_SHA ?? "dev";
-const commitHref = `https://github.com/iamrajjoshi/clip/commit/${commitSha}`;
-const pageTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
+const commitHref = commitSha === "dev"
+  ? "https://github.com/iamrajjoshi/clip"
+  : "https://github.com/iamrajjoshi/clip/commit/" + commitSha;
+const pageTitle = title === "Raj’s clips" ? title : title + " — Raj’s clips";
+const BrandHeading = pathname === "/" ? "h1" : "div";
+const isCollection = pathname === "/";
 ---
 
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en-US">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#000000" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="canonical" href={canonical.toString()} />
-    <link rel="alternate" type="application/rss+xml" title="clip rss" href={rssFeed} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#edf2fc" media="(prefers-color-scheme: light)" data-theme-color="light" />
+    <meta name="theme-color" content="#141e35" media="(prefers-color-scheme: dark)" data-theme-color="dark" />
+    <meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
+    <meta name="author" content="Raj Joshi" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title="Raj’s clips" href="/rss.xml" />
+    <link rel="preload" href="/fonts/bricolage-grotesque-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical.toString()} />
-    {socialImage && <meta property="og:image" content={socialImage} />}
-    <meta name="twitter:card" content={socialImage ? "summary_large_image" : "summary"} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Raj’s clips" />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content={title === "Raj’s clips" ? title : title + " in Raj’s clips"} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
-    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    <meta name="twitter:image" content={socialImage} />
+    <script is:inline src="/theme.js"></script>
   </head>
   <body>
-    <header class="site-header page-shell">
-      <p class="text-sm font-semibold">clip.rajjoshi.me</p>
-      {headerDescription && <p class="mt-2 text-sm text-[var(--text-muted)]">{headerDescription}</p>}
-    </header>
-    <main>
-      <slot />
-    </main>
-    <footer class="site-footer page-shell">
-      <div class="nav-row justify-center text-sm text-[var(--text-muted)]">
-        <a href={commitHref} target="_blank" rel="noreferrer">
-          {commitSha}
-        </a>
-        <span class="nav-divider">|</span>
-        <a href="https://github.com/iamrajjoshi" target="_blank" rel="noreferrer">
-          iamrajjoshi
-        </a>
-        <span class="nav-divider">|</span>
-        <a href="/rss.xml">
-          rss
-        </a>
-      </div>
-    </footer>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class:list={["site-shell", { "site-shell--reading": !isCollection, "site-shell--collection": isCollection }]}>
+      <header class="site-header">
+        <nav class="site-masthead" aria-label="Raj’s clips navigation">
+          <div class="site-identity">
+            <BrandHeading class="site-brand-heading">
+              <a class="site-brand" href="/">{isCollection ? <><span class="site-brand-line">Raj’s</span>{" "}<span class="site-brand-line">clips</span></> : "Raj’s clips"}</a>
+            </BrandHeading>
+            {isCollection && <p class="collection-description">Links, notes, and things I want to come back to.</p>}
+          </div>
+          <ul class="site-actions">
+            <li><a class="site-nav-link" href="https://rajjoshi.me/">About me <span aria-hidden="true">↗</span></a></li>
+            {!isCollection && <li><ThemeToggle /></li>}
+          </ul>
+        </nav>
+      </header>
+      <main class="site-main" id="main-content"><slot /></main>
+      <footer class="site-footer">
+        <a class="commit-link" href={commitHref} aria-label={commitSha === "dev" ? "View source on GitHub" : "View commit " + commitSha + " on GitHub"}>{commitSha === "dev" ? "Source" : commitSha}</a>
+      </footer>
+    </div>
   </body>
 </html>

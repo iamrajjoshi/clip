@@ -1,41 +1,98 @@
 ---
-import type { ClipEntry } from "@/lib/clips";
-import LinkCard from "@/components/cards/LinkCard.astro";
-import TweetCard from "@/components/cards/TweetCard.astro";
-import ImageCard from "@/components/cards/ImageCard.astro";
-import VideoCard from "@/components/cards/VideoCard.astro";
-import NoteCard from "@/components/cards/NoteCard.astro";
+import { collectTagCounts, getClipDescription, getClipTitle, type ClipEntry } from "@/lib/clips";
+import ClipTile from "@/components/ClipTile.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 
-const { clips, emptyMessage = "nothing here yet." } = Astro.props as {
-  clips: ClipEntry[];
-  emptyMessage?: string;
-};
+const { clips } = Astro.props as { clips: ClipEntry[] };
+const tags = collectTagCounts(clips);
+
+function getSearchText(clip: ClipEntry): string {
+  const postText = clip.data.kind === "tweet"
+    ? clip.data.author.name + " " + clip.data.text
+    : "";
+  return [
+    getClipTitle(clip),
+    getClipDescription(clip),
+    postText,
+    clip.body,
+    ...clip.data.tags,
+  ].join(" ").toLocaleLowerCase();
+}
 ---
 
-<section class="page-shell pb-4 pt-0">
-  {clips.length ? (
-    <div class="pt-0">
-      {clips.map((clip) => {
-        if (clip.data.kind === "link") {
-          return <LinkCard entry={clip} />;
-        }
-
-        if (clip.data.kind === "tweet") {
-          return <TweetCard entry={clip} />;
-        }
-
-        if (clip.data.kind === "image") {
-          return <ImageCard entry={clip} />;
-        }
-
-        if (clip.data.kind === "video") {
-          return <VideoCard entry={clip} />;
-        }
-
-        return <NoteCard entry={clip} />;
-      })}
+<section data-clip-feed aria-label="Saved clips">
+  <span class="sr-only" data-feed-status role="status" aria-live="polite"></span>
+  <header class="feed-tools">
+    <div class="feed-actions">
+      {clips.length > 0 && <button class="quiet-button search-toggle" type="button" data-search-toggle aria-expanded="false" aria-controls="clip-search">Search</button>}
+      <a class="quiet-link" href="/rss.xml">RSS</a>
+      <ThemeToggle />
     </div>
-  ) : (
-    <div class="section-block py-6 text-[var(--text-muted)]">{emptyMessage}</div>
+  </header>
+  {clips.length > 0 && (
+    <form class="feed-search" id="clip-search" role="search" hidden>
+      <label class="sr-only" for="clip-query">Search clips</label>
+      <input type="search" id="clip-query" name="q" placeholder="Search titles, text, or tags" autocomplete="off" />
+      {tags.length > 0 && <><label class="sr-only" for="clip-tag">Filter by tag</label><select id="clip-tag" name="tag"><option value="">All tags</option>{tags.map(({ tag }) => <option value={tag}>{tag}</option>)}</select></>}
+      <button class="quiet-button" type="reset">Clear</button>
+    </form>
   )}
+  <div class="clip-feed">
+    {clips.map((clip) => (
+      <div data-clip-entry data-search={getSearchText(clip)} data-tags={JSON.stringify(clip.data.tags)}>
+        <ClipTile entry={clip} />
+      </div>
+    ))}
+  </div>
+  <p class="empty-state" data-empty-state hidden={clips.length > 0}>{clips.length ? "No clips match this search. Try another word or clear the filters." : "Nothing saved here yet. Check back soon, or subscribe to the RSS feed."}</p>
 </section>
+
+<script>
+  const feed = document.querySelector<HTMLElement>("[data-clip-feed]");
+  const form = feed?.querySelector<HTMLFormElement>(".feed-search");
+  const query = form?.querySelector<HTMLInputElement>("[name=q]");
+  const tag = form?.querySelector<HTMLSelectElement>("[name=tag]");
+  const toggle = feed?.querySelector<HTMLButtonElement>("[data-search-toggle]");
+  const status = feed?.querySelector<HTMLElement>("[data-feed-status]");
+  const empty = feed?.querySelector<HTMLElement>("[data-empty-state]");
+  const entries = [...(feed?.querySelectorAll<HTMLElement>("[data-clip-entry]") ?? [])].map((element) => ({
+    element,
+    search: element.dataset.search ?? "",
+    tags: JSON.parse(element.dataset.tags ?? "[]") as string[],
+  }));
+
+  function filterClips(): void {
+    const terms = (query?.value.trim().toLocaleLowerCase() ?? "").split(/\s+/).filter(Boolean);
+    const selectedTag = tag?.value ?? "";
+    let count = 0;
+    for (const { element, search, tags } of entries) {
+      const matches = terms.every((term) => search.includes(term)) && (!selectedTag || tags.includes(selectedTag));
+      element.hidden = !matches;
+      if (matches) count += 1;
+    }
+    if (status) status.textContent = count + " " + (count === 1 ? "clip" : "clips") + (terms.length || selectedTag ? " of " + entries.length : "");
+    if (empty) empty.hidden = count > 0;
+  }
+
+  toggle?.addEventListener("click", () => {
+    if (!form) return;
+    form.hidden = !form.hidden;
+    toggle.setAttribute("aria-expanded", String(!form.hidden));
+    if (!form.hidden) query?.focus();
+  });
+  form?.addEventListener("submit", (event) => event.preventDefault());
+  form?.addEventListener("input", filterClips);
+  form?.addEventListener("reset", () => {
+    requestAnimationFrame(filterClips);
+    query?.focus();
+  });
+  window.addEventListener("pageshow", () => requestAnimationFrame(filterClips));
+
+  const selectedTag = new URLSearchParams(window.location.search).get("tag");
+  if (selectedTag && tag && [...tag.options].some((option) => option.value === selectedTag)) {
+    tag.value = selectedTag;
+    if (form) form.hidden = false;
+    toggle?.setAttribute("aria-expanded", "true");
+    filterClips();
+  }
+</script>

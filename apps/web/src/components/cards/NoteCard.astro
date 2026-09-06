@@ -1,15 +1,13 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { ClipEntry } from "@/lib/clips";
 import CardShell from "@/components/cards/CardShell.astro";
 import EntryBody from "@/components/EntryBody.astro";
 
-const { entry } = Astro.props as { entry: CollectionEntry<"clips"> };
-
-if (entry.data.kind !== "note") {
-  throw new Error("NoteCard received a non-note entry.");
-}
+const { entry, standalone = false } = Astro.props as { entry: ClipEntry; standalone?: boolean };
+if (entry.data.kind !== "note") throw new Error("NoteCard received a non-note entry.");
 ---
 
-<CardShell entry={entry}>
-  <EntryBody entry={entry} />
+<CardShell entry={entry} standalone={standalone}>
+  {standalone && <h1 class="sr-only">Saved note</h1>}
+  {entry.body?.trim() ? <EntryBody entry={entry} /> : <p class="clip-description">This note has no text yet.</p>}
 </CardShell>

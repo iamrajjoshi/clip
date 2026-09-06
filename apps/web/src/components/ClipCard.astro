@@ -1,0 +1,14 @@
+---
+import type { ClipEntry } from "@/lib/clips";
+import LinkCard from "@/components/cards/LinkCard.astro";
+import TweetCard from "@/components/cards/TweetCard.astro";
+import ImageCard from "@/components/cards/ImageCard.astro";
+import VideoCard from "@/components/cards/VideoCard.astro";
+import NoteCard from "@/components/cards/NoteCard.astro";
+
+const { entry, standalone = false } = Astro.props as { entry: ClipEntry; standalone?: boolean };
+const cards = { link: LinkCard, tweet: TweetCard, image: ImageCard, video: VideoCard, note: NoteCard };
+const Card = cards[entry.data.kind];
+---
+
+<Card entry={entry} standalone={standalone} />
