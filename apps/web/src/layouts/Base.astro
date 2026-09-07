@@ -22,8 +22,8 @@ const canonical = new URL(pathname, Astro.site);
 const socialImage = new URL(image, Astro.site).toString();
 const commitSha = import.meta.env.PUBLIC_COMMIT_SHA ?? "dev";
 const commitHref = commitSha === "dev"
-  ? "https://github.com/iamrajjoshi/clip"
-  : "https://github.com/iamrajjoshi/clip/commit/" + commitSha;
+  ? "https://github.com/iamrajjoshi/clips"
+  : "https://github.com/iamrajjoshi/clips/commit/" + commitSha;
 const pageTitle = title === "Raj’s clips" ? title : title + " — Raj’s clips";
 const BrandHeading = pathname === "/" ? "h1" : "div";
 const isCollection = pathname === "/";
