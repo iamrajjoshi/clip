@@ -22,38 +22,42 @@ function getSearchText(clip: ClipEntry): string {
 
 <section data-clip-feed aria-label="Saved clips">
   <span class="sr-only" data-feed-status role="status" aria-live="polite"></span>
-  <form class="feed-tools feed-search" id="clip-search" role="search">
-    {clips.length > 0 && (
-      <>
-        <div class="search-field">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6" /><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
-          <label class="sr-only" for="clip-query">Search clips</label>
-          <input type="search" id="clip-query" name="q" placeholder="Find a clip…" autocomplete="off" disabled />
-          <button class="search-clear" type="reset" aria-label="Clear search and filters" hidden><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
-        </div>
-        {tags.length > 0 && (
-          <label class="tag-field">
-            <span class="sr-only">Filter by tag</span>
-            <select id="clip-tag" name="tag" disabled><option value="">All tags</option>{tags.map(({ tag }) => <option value={tag}>{tag}</option>)}</select>
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
-          </label>
-        )}
-      </>
-    )}
-    <div class="feed-actions">
-      <a class="quiet-link" href="/rss.xml">RSS</a>
-      <ThemeToggle />
-    </div>
-  </form>
-  <noscript><p class="search-notice">Enable JavaScript to search and filter. All clips are shown below.</p></noscript>
-  <div class="clip-feed">
-    {clips.map((clip) => (
-      <div data-clip-entry data-search={getSearchText(clip)} data-tags={JSON.stringify(clip.data.tags)}>
-        <ClipTile entry={clip} />
+  <div class="feed-header">
+    <form class="feed-tools feed-search" id="clip-search" role="search">
+      {clips.length > 0 && (
+        <>
+          <div class="search-field">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.6" /><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+            <label class="sr-only" for="clip-query">Search clips</label>
+            <input type="search" id="clip-query" name="q" placeholder="Find a clip…" autocomplete="off" disabled />
+            <button class="search-clear" type="reset" aria-label="Clear search and filters" hidden><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m6 6 8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg></button>
+          </div>
+          {tags.length > 0 && (
+            <label class="tag-field">
+              <span class="sr-only">Filter by tag</span>
+              <select id="clip-tag" name="tag" disabled><option value="">All tags</option>{tags.map(({ tag }) => <option value={tag}>{tag}</option>)}</select>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </label>
+          )}
+        </>
+      )}
+      <div class="feed-actions">
+        <a class="quiet-link" href="/rss.xml">RSS</a>
+        <ThemeToggle />
       </div>
-    ))}
+    </form>
+    <noscript><p class="search-notice">Enable JavaScript to search and filter. All clips are shown below.</p></noscript>
   </div>
-  <p class="empty-state" data-empty-state hidden={clips.length > 0}>{clips.length ? "No clips match this search. Try another word or clear the filters." : "Nothing saved here yet. Check back soon, or subscribe to the RSS feed."}</p>
+  <div class="feed-results">
+    <div class="clip-feed">
+      {clips.map((clip) => (
+        <div data-clip-entry data-search={getSearchText(clip)} data-tags={JSON.stringify(clip.data.tags)}>
+          <ClipTile entry={clip} />
+        </div>
+      ))}
+    </div>
+    <p class="empty-state" data-empty-state hidden={clips.length > 0}>{clips.length ? "No clips match this search. Try another word or clear the filters." : "Nothing saved here yet. Check back soon, or subscribe to the RSS feed."}</p>
+  </div>
 </section>
 
 <script>

@@ -108,8 +108,31 @@ h3 {
   margin-bottom: 2rem;
 }
 
-[data-clip-feed] {
+.feed-header {
   container-type: inline-size;
+}
+
+@media screen and (min-width: 48.01em) {
+  /* Share the toolbar and content rows so the masthead starts at the first tile. */
+  .site-shell--collection {
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .site-shell--collection .site-header {
+    grid-row: 2;
+  }
+
+  .site-shell--collection .site-main,
+  .site-shell--collection [data-clip-feed] {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 3;
+    align-self: stretch;
+  }
+
+  .site-shell--collection .site-footer {
+    grid-row: 3;
+  }
 }
 
 .clip-feed {
