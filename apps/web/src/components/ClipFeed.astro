@@ -23,6 +23,10 @@ function getSearchText(clip: ClipEntry): string {
 <section data-clip-feed aria-label="Saved clips">
   <span class="sr-only" data-feed-status role="status" aria-live="polite"></span>
   <div class="feed-header">
+    <div class="feed-actions">
+      <a class="quiet-link" href="/rss.xml">RSS</a>
+      <ThemeToggle />
+    </div>
     <form class="feed-tools feed-search" id="clip-search" role="search">
       {clips.length > 0 && (
         <>
@@ -41,10 +45,6 @@ function getSearchText(clip: ClipEntry): string {
           )}
         </>
       )}
-      <div class="feed-actions">
-        <a class="quiet-link" href="/rss.xml">RSS</a>
-        <ThemeToggle />
-      </div>
     </form>
     <noscript><p class="search-notice">Enable JavaScript to search and filter. All clips are shown below.</p></noscript>
   </div>

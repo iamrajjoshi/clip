@@ -94,7 +94,8 @@ h3 {
 }
 
 .feed-actions {
-  grid-column: -2 / -1;
+  min-height: 2.75rem;
+  margin-bottom: 1rem;
   gap: 0.85rem;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -102,37 +103,10 @@ h3 {
 
 .feed-tools {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 1.25rem;
   margin-bottom: 2rem;
-}
-
-.feed-header {
-  container-type: inline-size;
-}
-
-@media screen and (min-width: 48.01em) {
-  /* Share the toolbar and content rows so the masthead starts at the first tile. */
-  .site-shell--collection {
-    grid-template-rows: auto 1fr auto;
-  }
-
-  .site-shell--collection .site-header {
-    grid-row: 2;
-  }
-
-  .site-shell--collection .site-main,
-  .site-shell--collection [data-clip-feed] {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: 1 / 3;
-    align-self: stretch;
-  }
-
-  .site-shell--collection .site-footer {
-    grid-row: 3;
-  }
 }
 
 .clip-feed {
@@ -589,18 +563,13 @@ h3 {
   }
 }
 
-@container (max-width: 38rem) {
+@media (max-width: 24em) {
   .feed-tools {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.5rem 1rem;
+    gap: 0.75rem;
   }
 
-  .search-field {
-    grid-column: 1 / -1;
-  }
-
-  .tag-field {
-    justify-self: start;
+  .tag-field select {
+    width: 7rem;
   }
 }
 
@@ -989,6 +958,7 @@ h3 {
 
   .site-header,
   .site-footer,
+  .feed-actions,
   .feed-tools,
   .feed-search,
   .permalink-nav {
