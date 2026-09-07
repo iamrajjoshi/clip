@@ -25,7 +25,6 @@
   --marker: var(--faint);
   --accent: #2344d2;
   --selection: #cfdaff;
-  --toggle-turn: 0deg;
   --font-sans: "Bricolage Grotesque", system-ui, sans-serif;
   --font-mono:
     ui-monospace, SFMono-Regular, "Cascadia Code", "Roboto Mono", Consolas, "Liberation Mono",
@@ -66,7 +65,6 @@
   --surface: #202f4b;
   --accent: #a8bcff;
   --selection: #304982;
-  --toggle-turn: 180deg;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -83,7 +81,6 @@
     --surface: #202f4b;
     --accent: #a8bcff;
     --selection: #304982;
-    --toggle-turn: 180deg;
   }
 }
 
@@ -290,20 +287,27 @@ button {
   outline-offset: 0.15rem;
 }
 
-.theme-toggle-mark {
-  width: 1.125rem;
-  height: 1.125rem;
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 1.5;
-  transform: rotate(var(--toggle-turn));
+.theme-icon {
+  grid-area: 1 / 1;
   transform-origin: center;
-  transition: transform 180ms ease;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
 }
 
-.theme-toggle-mark path {
-  fill: currentcolor;
-  stroke: none;
+.theme-icon-moon {
+  opacity: 0;
+  transform: rotate(-25deg) scale(0.8);
+}
+
+.theme-toggle[aria-checked="true"] .theme-icon-sun {
+  opacity: 0;
+  transform: rotate(25deg) scale(0.8);
+}
+
+.theme-toggle[aria-checked="true"] .theme-icon-moon {
+  opacity: 1;
+  transform: rotate(0) scale(1);
 }
 
 .site-main {
@@ -410,7 +414,7 @@ button {
     scroll-behavior: auto;
   }
 
-  .theme-toggle-mark {
+  .theme-icon {
     transition: none;
   }
 }
